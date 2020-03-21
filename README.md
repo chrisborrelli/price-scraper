@@ -44,7 +44,7 @@ This project could be implemented in a variety of programming languages. The top
 2. Fork the repository by clicking fork button on GitHub.
   - You can store the fork in your own GitHub user area.
 
-3. Clone the forked repository from your user area on GitHub.
+3. Clone the forked repository from your user area on GitHub. These commands should be entered into the command line either using a shell in Mac or Linux, or Git Bash in Windows.
 
 ```
 $ git clone https://github.com/<your-username/price-scraper.git
