@@ -59,6 +59,7 @@ This project could be implemented in a variety of programming languages. The top
 5. Create a branch. Don't every make changes directly on 'master'
 
   `$ git branch -b new-branch`
+  
   `$ git push origin new-branch`
 
 6. You can now make changes to files with your favorite text editor.
@@ -71,8 +72,17 @@ This project could be implemented in a variety of programming languages. The top
 
 8. Push the changes to your local branch to your original (the fork repo in your GitHub).
 
-  `$ git push origin new-branch'
+  `$ git push origin`
 
 9. Goto to GitHub and start and complete the Pull Request process to get these changes into the Upstream Repository Master Branch.
 
+10. Keep your fork and cloned local repositories up-to-date.
+
+  `$ git fetch upstream
+  
+   $ git checkout master
+  
+   $ git merge upstream/master
+   
+   $ git push origin master`
 
