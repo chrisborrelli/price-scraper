@@ -35,3 +35,44 @@ The output is a CSV with the following column format. In this example, the numbe
 
 This project could be implemented in a variety of programming languages. The top two choices at this moment are Python and Javascipt on Electron.
 
+## How To Contribute
+
+1. First you need git.
+  - For Linux or Mac, you already have it
+  - For Windows, download Git here: https://git-scm.com/downloads
+
+2. Fork the repository by clicking fork button on GitHub.
+  - You can store the fork in your own GitHub user area.
+
+3. Clone the forked repository from your user area on GitHub.
+
+  `$ git clone https://github.com/<your-username/price-scraper.git`
+
+4. Setup remotes.
+
+  `$ git remote -v`
+
+  `$ git remote add upstream https://github.com/chrisborrelli/price-scraper.git`
+ 
+  `$ git remote -v'
+
+5. Create a branch. Don't every make changes directly on 'master'
+
+  `$ git branch -b new-branch`
+  `$ git push origin new-branch`
+
+6. You can now make changes to files with your favorite text editor.
+
+  `$ vim README.md`
+
+7. Stage and commit the changes to your local repository. This only updates the branch on your local repository on your local machine hard disk.
+
+  `$ git commit -a -m 'Added a message here...'`
+
+8. Push the changes to your local branch to your original (the fork repo in your GitHub).
+
+  `$ git push origin new-branch'
+
+9. Goto to GitHub and start and complete the Pull Request process to get these changes into the Upstream Repository Master Branch.
+
+
