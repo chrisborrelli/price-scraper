@@ -94,4 +94,9 @@ $ git merge upstream/master
 $ git push origin master
 ```
    
-11. Have Fun!! 
+11. References
+
+  - https://help.github.com/en/github/collaborating-with-issues-and-pull-requests
+  - https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/working-with-forks
+  - https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
+
