@@ -37,14 +37,20 @@ This project could be implemented in a variety of programming languages. The top
 
 ## How To Contribute
 
-1. First you need git.
+1. First you need Git.
+
   - For Linux or Mac, you already have it
+
   - For Windows, download Git here: https://git-scm.com/downloads
 
 2. Fork the repository by clicking fork button on GitHub.
+
   - You can store the fork in your own GitHub user area.
 
 3. Clone the forked repository from your user area on GitHub. These commands should be entered into the command line either using a shell in Mac or Linux, or Git Bash in Windows.
+
+  - Note: Using a good text editor with Git support like [Atom](https://atom.io)
+    will make this process easier, but the flow should still be understood.
 
 ```
 $ git clone https://github.com/<your-username/price-scraper.git
@@ -93,10 +99,9 @@ $ git checkout master
 $ git merge upstream/master
 $ git push origin master
 ```
-   
+
 11. References
 
   - https://help.github.com/en/github/collaborating-with-issues-and-pull-requests
   - https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/working-with-forks
   - https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
-
