@@ -54,5 +54,5 @@ JsonDb.prototype.read = function() {
 }
 
 JsonDb.prototype.write = function() {
-  fs.writeFileSync(this.path, JSON.stringify(this.data));
+  fs.writeFileSync(this.path, JSON.stringify(this.data, null, 4));
 }

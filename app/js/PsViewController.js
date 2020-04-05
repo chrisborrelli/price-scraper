@@ -78,6 +78,11 @@ var PsViewController = function() {
     this.createNewProject(event);
   }.bind(this));
 
+  // Register Event Handler for Add New Item Button
+  document.getElementById('addNewItemButton').addEventListener("click", function(event) {
+    this.addNewItem(event);
+  }.bind(this));
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -147,27 +152,72 @@ PsViewController.prototype.createNewProject = function(event) {
   let baseSkuName = this.baseSkuName;
   let startSkuNum = this.startSkuNum;
   let path = this.path + '/' + baseSkuName + '-' + startSkuNum + '.json';
+  this.currentFile = path;
+  this.currentSkuNum = startSkuNum;
 
-  console.log(path);
-
+  // Create new data base object
   this.db = new JsonDb(path);
 
+  // Insert config object into data base
   if (!this.db.data.hasOwnProperty('config')) {
     this.db.data.config = {
       baseSkuName: baseSkuName,
-      startSkuNum: startSkuNum
+      startSkuNum: startSkuNum,
+      currentSkuNum: startSkuNum
     };
   }
+  this.db.write();
 
-  let itemIdText = baseSkuName + '-' + startSkuNum;
-  let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, startSkuNum);
-  this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, itemIdText);
+  // Setup UI to add first item
+  // let itemIdText = baseSkuName + '-' + startSkuNum;
+  // let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, startSkuNum);
+  // this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, itemIdText);
   document.getElementById("listDivMain").hidden = false;
 
-  console.log(this.db.data);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Add New Item
+/////////////////////////////////////////////////////////////////////////////
+PsViewController.prototype.addNewItem = function(event) {
+  let baseSkuName = this.db.data.config.baseSkuName;
+  let currentSkuNum = this.db.data.config.currentSkuNum;
+  let file = this.currentFile;
+  let sku = baseSkuName + currentSkuNum;
+
+  // Setup UI to add first item
+  let itemIdText = baseSkuName + '-' + currentSkuNum;
+  let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, currentSkuNum);
+  this.itemDivBody.innerHTML += htmlString.replace(/__NUM__/gi, itemIdText);
+  document.getElementById("itemMainCard").hidden = false;
+
+  this.db.data.config.currentSkuNum = Number(currentSkuNum) + 1;
+
+  if (!this.db.data.hasOwnProperty('items')) {
+    this.db.data.items = {};
+  }
+  this.db.data.items[sku] = {
+    brand:                '',
+    qty:                  '',
+    storageLocation:      '',
+    sku:                  sku,
+    barcode:              '',
+    condition:            '',
+    conditionDescription: '',
+    ebayCheckbox:         '',
+    amazonCheckbox:       '',
+    notes:                '',
+    category:             '',
+    asin:                 '',
+    ebayPrice:            '',
+    amazonPrice:          ''
+  };
 
   this.db.write();
+
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Main Code Entry Point
