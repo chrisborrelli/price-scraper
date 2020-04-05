@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.6">
+  <title>Listing Builder</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <meta name="theme-color" content="#563d7c">
+
+  <!-- Custom styles for this template -->
+  <link href="css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="https://github.com/chrisborrelli/price-scraper">Price Scraper</a>
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="https://github.com/chrisborrelli/price-scraper">Git Hub</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <span data-feather="home"></span>Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="camera"></span>
+                Orders
+              </a>
+            </li>
+          </ul>
+
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Heading</span>
+            <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
+              <span data-feather="plus-circle"></span>
+            </a>
+          </h6>
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Link 1
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Link 2
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Link 3
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <!-- New Project Modal -->
+        <div class="modal fade" id="newProjectDialog" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">New Listing Project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+              <div class="modal-body">
+
+                <div class="card border-0">New Project Directory</div>
+                <div class="custom-file">
+                  <input type="file" nwdirectory class="custom-file-input" id="dirChooser">
+                  <label class="custom-file-label" id="dirChooserLabel" for="dirChooser">Choose directory</label>
+                </div>
+
+                <div class="form-row">
+                  <div class="col-8">
+                    <label for="newProjectConfigBaseName">SKU Base Name</label>
+                    <input type="text" class="form-control" id="newProjectConfigBaseName" placeholder="">
+                  </div>
+
+                  <div class="col">
+                    <label for="newProjectConfigStartSKU">Start SKU Number</label>
+                    <input type="number" class="form-control" id="newProjectConfigStartSKU" value="10001">
+                  </div>
+                </div>
+
+
+
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="createProjectButton" class="btn btn-primary" data-dismiss="modal" disabled>Create</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Listing Builder</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button type="button" id="button-new" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#newProjectDialog">New</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary">Save</button>
+
+            </div>
+          </div>
+        </div>
+
+        <h2>Items
+          <button type="button" class="btn btn-link btn-xs">
+            <span data-feather="plus-circle" class="feather-big"></span>
+          </button>
+        </h2>
+
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <img src="..." width="100%" alt="Image">
+              </div>
+              <div class="col-sm-8">
+
+                <form>
+                  <div class="form-row">
+                    <div class="col">
+                      <input type="text" class="form-control form-control-lg" id="exampleFormControlTitle1" placeholder="Product Title">
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="col-9">
+                      <label for="exampleFormControlBrand1">Brand</label>
+                      <input type="text" class="form-control" id="exampleFormControlBrand1" placeholder="">
+                    </div>
+
+                    <div class="col">
+                      <label for="exampleFormControlQty1">Qty</label>
+                      <input type="number" class="form-control" id="exampleFormControlQty1" value="1"> <!-- TODO: only fill in value for new items... -->
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="col-4">
+                      <label for="exampleFormControlStorageLocation1">Storage Location</label>
+                      <input type="text" class="form-control" id="exampleFormControlStorageLocation1" placeholder="location">
+                    </div>
+                    <div class="col-4">
+                      <label for="exampleFormControlsku1">SKU</label>
+                      <input type="text" class="form-control" id="exampleFormControlsku1" placeholder="SKU">
+                    </div>
+                    <div class="col">
+                      <label for="exampleFormControlBarcode1">Barcode (ISBN)</label>
+                      <input type="text" class="form-control" id="exampleFormControlBarcode1" placeholder="ISBN">
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="col-3">
+                      <label for="exampleFormControlSelect1">Condition</label>
+                      <select class="custom-select" id="exampleFormControlSelect1">
+                        <option selected value="New">New</option>
+                        <option value="New/Other">New/Other</option>
+                        <option value="Used">Used</option>
+                      </select>
+                    </div>
+                    <div class="col">
+                      <div class="col">
+                        <label for="exampleFormControlConditionDescription1">Condition Description</label>
+                        <input type="text" class="form-control" id="exampleFormControlConditionDescription1" placeholder="Add condition descption if needed...">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-check">
+                      <div class="col-2">
+                        <br><br>
+                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlEbayCheckbox1" checked>
+                        <label class="form-check-label" for="exampleFormControlEbayCheckbox1">eBay</label>
+                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlAmazonCheckbox1" checked>
+                        <label class="form-check-label" for="exampleFormControlAmazonCheckbox1">Amazon</label>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <label for="exampleFormControlNotes1">Notes</label>
+                      <textarea class="form-control" id="exampleFormControlNotes1" rows="3"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col">
+                      <label for="exampleFormControlCategory1">Category</label>
+                      <input type="text" class="form-control form-control" id="exampleFormControlCategory1" placeholder="Category">
+                    </div>
+
+                    <div class="col">
+                      <label for="exampleFormControlASIN1">ASIN</label>
+                      <input type="text" class="form-control form-control" id="exampleFormControlASIN1" placeholder="ASIN">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col">
+                      <label for="exampleFormControlEbayPrice1">eBay Price</label>
+                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlEbayPrice1" value="0.00">
+                    </div>
+                    <div class="col">
+                      <label for="exampleFormControlAmazonPrice1">Amazon Price</label>
+                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlAmazonPrice1" value="0.00">
+                    </div>
+                  </div>
+                </form>
+
+              </div>
+
+              <div class="col-sm-1 align-self-center">
+                <button type="button" class="btn btn-link btn-xs">
+                  <span data-feather="trash-2" class="feather-big"></span>
+                </button>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+              <div class="col-sm-3">
+                <img src="..." width="100%" alt="Image">
+              </div>
+              <div class="col-sm-8">
+
+                <form>
+                  <div class="form-row">
+                    <div class="col">
+                      <input type="text" class="form-control form-control-lg" id="exampleFormControlTitle2" placeholder="Product Title">
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="col-9">
+                      <label for="exampleFormControlBrand2">Brand</label>
+                      <input type="text" class="form-control" id="exampleFormControlBrand2" placeholder="">
+                    </div>
+
+                    <div class="col">
+                      <label for="exampleFormControlQty2">Qty</label>
+                      <input type="number" class="form-control" id="exampleFormControlQty2" value="1"> <!-- TODO: only fill in value for new items... -->
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="col-4">
+                      <label for="exampleFormControlStorageLocation2">Storage Location</label>
+                      <input type="text" class="form-control" id="exampleFormControlStorageLocation2" placeholder="location">
+                    </div>
+                    <div class="col-4">
+                      <label for="exampleFormControlsku2">SKU</label>
+                      <input type="text" class="form-control" id="exampleFormControlsku2" placeholder="SKU">
+                    </div>
+                    <div class="col">
+                      <label for="exampleFormControlSelect2">Barcode (ISBN)</label>
+                      <input type="text" class="form-control" id="exampleFormControlBarcode2" placeholder="ISBN">
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="col-3">
+                      <label for="exampleFormControlSelect2">Condition</label>
+                      <select class="custom-select" id="exampleFormControlSelect2">
+                        <option selected value="New">New</option>
+                        <option value="New/Other">New/Other</option>
+                        <option value="Used">Used</option>
+                      </select>
+                    </div>
+                    <div class="col">
+                      <div class="col">
+                        <label for="exampleFormControlConditionDescription2">Condition Description</label>
+                        <input type="text" class="form-control" id="exampleFormControlConditionDescription2" placeholder="Add condition descption if needed...">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-check">
+                      <div class="col-2">
+                        <br><br>
+                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlEbayCheckbox2" checked>
+                        <label class="form-check-label" for="defaultCheck2">eBay</label>
+                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlAmazonCheckbox2" checked>
+                        <label class="form-check-label" for="defaultCheck2">Amazon</label>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <label for="exampleFormControlNotes2">Notes</label>
+                      <textarea class="form-control" id="exampleFormControlNotes2" rows="3"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col">
+                      <label for="exampleFormControlCategory2">Category</label>
+                      <input type="text" class="form-control form-control" id="exampleFormControlCategory2" placeholder="Category">
+                    </div>
+
+                    <div class="col">
+                      <label for="exampleFormControlASIN2">ASIN</label>
+                      <input type="text" class="form-control form-control" id="exampleFormControlASIN2" placeholder="ASIN">
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col">
+                      <label for="exampleFormControlEbayPrice2">eBay Price</label>
+                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlEbayPrice2" value="0.00">
+                    </div>
+                    <div class="col">
+                      <label for="exampleFormControlAmazonPrice2">Amazon Price</label>
+                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlAmazonPrice2" value="0.00">
+                    </div>
+                  </div>
+                </form>
+
+              </div>
+
+              <div class="col-sm-1 align-self-center">
+                <button type="button" class="btn btn-link btn-xs">
+                  <span data-feather="trash-2" class="feather-big"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="js/vendor/jquery.slim.min.js"></script>
+  <script src="bootstrap-4.4.1-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/vendor/feather.min.js"></script>
+  <script src="js/JsonDb.js"></script>
+  <script src="js/PsViewController.js"></script>
+
+</body>
+
+</html>

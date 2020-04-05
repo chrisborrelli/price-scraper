@@ -1,0 +1,104 @@
+<div class="row">
+  <div class="col-sm-3">
+    <img src="..." width="100%" alt="Image">
+  </div>
+  <div class="col-sm-8">
+
+    <form>
+      <div class="form-row">
+        <div class="col">
+          <input type="text" class="form-control form-control-lg" id="itemTitle___NUM__" placeholder="Product Title">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-9">
+          <label for="itemBrand___NUM__">Brand</label>
+          <input type="text" class="form-control" id="itemBrand___0__" placeholder="">
+        </div>
+
+        <div class="col">
+          <label for="itemQty___NUM__">Qty</label>
+          <input type="number" class="form-control" id="itemQty___NUM__" value="1"> <!-- TODO: only fill in value for new items... -->
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-4">
+          <label for="itemStorageLocation___NUM__">Storage Location</label>
+          <input type="text" class="form-control" id="itemStorageLocation___NUM__" placeholder="location">
+        </div>
+        <div class="col-4">
+          <label for="itemSku___NUM__">SKU</label>
+          <input type="text" class="form-control" id="itemSku___NUM__" placeholder="SKU">
+        </div>
+        <div class="col">
+          <label for="itemBarcode___NUM__">Barcode (ISBN)</label>
+          <input type="text" class="form-control" id="itemBarcode___NUM__" placeholder="ISBN">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col-3">
+          <label for="itemSelect___NUM__">Condition</label>
+          <select class="custom-select" id="itemSelect___NUM__">
+            <option selected value="New">New</option>
+            <option value="New/Other">New/Other</option>
+            <option value="Used">Used</option>
+          </select>
+        </div>
+        <div class="col">
+          <div class="col">
+            <label for="itemConditionDescription___NUM__">Condition Description</label>
+            <input type="text" class="form-control" id="itemConditionDescription___NUM__" placeholder="Add condition descption if needed...">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-check">
+          <div class="col-2">
+            <br><br>
+            <input class="form-check-input" type="checkbox" value="" id="itemEbayCheckbox___NUM__" checked>
+            <label class="form-check-label" for="itemEbayCheckbox___NUM__">eBay</label>
+            <input class="form-check-input" type="checkbox" value="" id="itemAmazonCheckbox___NUM__" checked>
+            <label class="form-check-label" for="itemAmazonCheckbox___NUM__">Amazon</label>
+          </div>
+        </div>
+        <div class="col">
+          <label for="itemNotes___NUM__">Notes</label>
+          <textarea class="form-control" id="itemNotes___NUM__" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <label for="itemCategory___NUM__">Category</label>
+          <input type="text" class="form-control form-control" id="itemCategory___NUM__" placeholder="Category">
+        </div>
+
+        <div class="col">
+          <label for="itemAsin___NUM__">ASIN</label>
+          <input type="text" class="form-control form-control" id="itemAsin___NUM__" placeholder="ASIN">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <label for="itemEbayPrice___NUM__">eBay Price</label>
+          <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="itemEbayPrice___NUM__" value="0.00">
+        </div>
+        <div class="col">
+          <label for="itemAmazonPrice___NUM__">Amazon Price</label>
+          <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="itemAmazonPrice___NUM__" value="0.00">
+        </div>
+      </div>
+    </form>
+
+  </div>
+
+  <div class="col-sm-1 align-self-center">
+    <button type="button" id="itemDeleteButton___NUM__" class="btn btn-link btn-xs">
+      <span data-feather="trash-2" class="feather-big"></span>
+    </button>
+  </div>
+
+</div>

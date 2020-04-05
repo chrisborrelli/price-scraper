@@ -1,0 +1,1 @@
+{"init":{"baseName":"cjb_","skuNum":1000},"config":{"baseName":"cjb_","skuNum":1000}}
