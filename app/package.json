@@ -1,4 +1,8 @@
 {
   "name": "Price Scaper",
-  "main": "index.html"
+  "main": "index.html",
+  "window": {
+    "width": 1200,
+    "height": 900
+  }
 }
