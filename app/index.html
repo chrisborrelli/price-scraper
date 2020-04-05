@@ -103,8 +103,6 @@
                 </div>
 
 
-
-
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -125,222 +123,16 @@
           </div>
         </div>
 
-        <h2>Items
-          <button type="button" class="btn btn-link btn-xs">
-            <span data-feather="plus-circle" class="feather-big"></span>
-          </button>
-        </h2>
+        <div id="listDivMain" hidden=true>
+          <h2>Items
+            <button type="button" class="btn btn-link btn-xs">
+              <span data-feather="plus-circle" class="feather-big"></span>
+            </button>
+          </h2>
 
-        <div class="card">
-          <div class="card-body">
-            <div class="row">
-              <div class="col-sm-3">
-                <img src="..." width="100%" alt="Image">
-              </div>
-              <div class="col-sm-8">
+          <div class="card">
+            <div class="card-body" id="itemDivBody">
 
-                <form>
-                  <div class="form-row">
-                    <div class="col">
-                      <input type="text" class="form-control form-control-lg" id="exampleFormControlTitle1" placeholder="Product Title">
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="col-9">
-                      <label for="exampleFormControlBrand1">Brand</label>
-                      <input type="text" class="form-control" id="exampleFormControlBrand1" placeholder="">
-                    </div>
-
-                    <div class="col">
-                      <label for="exampleFormControlQty1">Qty</label>
-                      <input type="number" class="form-control" id="exampleFormControlQty1" value="1"> <!-- TODO: only fill in value for new items... -->
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="col-4">
-                      <label for="exampleFormControlStorageLocation1">Storage Location</label>
-                      <input type="text" class="form-control" id="exampleFormControlStorageLocation1" placeholder="location">
-                    </div>
-                    <div class="col-4">
-                      <label for="exampleFormControlsku1">SKU</label>
-                      <input type="text" class="form-control" id="exampleFormControlsku1" placeholder="SKU">
-                    </div>
-                    <div class="col">
-                      <label for="exampleFormControlBarcode1">Barcode (ISBN)</label>
-                      <input type="text" class="form-control" id="exampleFormControlBarcode1" placeholder="ISBN">
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="col-3">
-                      <label for="exampleFormControlSelect1">Condition</label>
-                      <select class="custom-select" id="exampleFormControlSelect1">
-                        <option selected value="New">New</option>
-                        <option value="New/Other">New/Other</option>
-                        <option value="Used">Used</option>
-                      </select>
-                    </div>
-                    <div class="col">
-                      <div class="col">
-                        <label for="exampleFormControlConditionDescription1">Condition Description</label>
-                        <input type="text" class="form-control" id="exampleFormControlConditionDescription1" placeholder="Add condition descption if needed...">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="form-check">
-                      <div class="col-2">
-                        <br><br>
-                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlEbayCheckbox1" checked>
-                        <label class="form-check-label" for="exampleFormControlEbayCheckbox1">eBay</label>
-                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlAmazonCheckbox1" checked>
-                        <label class="form-check-label" for="exampleFormControlAmazonCheckbox1">Amazon</label>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <label for="exampleFormControlNotes1">Notes</label>
-                      <textarea class="form-control" id="exampleFormControlNotes1" rows="3"></textarea>
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="col">
-                      <label for="exampleFormControlCategory1">Category</label>
-                      <input type="text" class="form-control form-control" id="exampleFormControlCategory1" placeholder="Category">
-                    </div>
-
-                    <div class="col">
-                      <label for="exampleFormControlASIN1">ASIN</label>
-                      <input type="text" class="form-control form-control" id="exampleFormControlASIN1" placeholder="ASIN">
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="col">
-                      <label for="exampleFormControlEbayPrice1">eBay Price</label>
-                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlEbayPrice1" value="0.00">
-                    </div>
-                    <div class="col">
-                      <label for="exampleFormControlAmazonPrice1">Amazon Price</label>
-                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlAmazonPrice1" value="0.00">
-                    </div>
-                  </div>
-                </form>
-
-              </div>
-
-              <div class="col-sm-1 align-self-center">
-                <button type="button" class="btn btn-link btn-xs">
-                  <span data-feather="trash-2" class="feather-big"></span>
-                </button>
-              </div>
-            </div>
-
-            <hr>
-
-            <div class="row">
-              <div class="col-sm-3">
-                <img src="..." width="100%" alt="Image">
-              </div>
-              <div class="col-sm-8">
-
-                <form>
-                  <div class="form-row">
-                    <div class="col">
-                      <input type="text" class="form-control form-control-lg" id="exampleFormControlTitle2" placeholder="Product Title">
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="col-9">
-                      <label for="exampleFormControlBrand2">Brand</label>
-                      <input type="text" class="form-control" id="exampleFormControlBrand2" placeholder="">
-                    </div>
-
-                    <div class="col">
-                      <label for="exampleFormControlQty2">Qty</label>
-                      <input type="number" class="form-control" id="exampleFormControlQty2" value="1"> <!-- TODO: only fill in value for new items... -->
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="col-4">
-                      <label for="exampleFormControlStorageLocation2">Storage Location</label>
-                      <input type="text" class="form-control" id="exampleFormControlStorageLocation2" placeholder="location">
-                    </div>
-                    <div class="col-4">
-                      <label for="exampleFormControlsku2">SKU</label>
-                      <input type="text" class="form-control" id="exampleFormControlsku2" placeholder="SKU">
-                    </div>
-                    <div class="col">
-                      <label for="exampleFormControlSelect2">Barcode (ISBN)</label>
-                      <input type="text" class="form-control" id="exampleFormControlBarcode2" placeholder="ISBN">
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="col-3">
-                      <label for="exampleFormControlSelect2">Condition</label>
-                      <select class="custom-select" id="exampleFormControlSelect2">
-                        <option selected value="New">New</option>
-                        <option value="New/Other">New/Other</option>
-                        <option value="Used">Used</option>
-                      </select>
-                    </div>
-                    <div class="col">
-                      <div class="col">
-                        <label for="exampleFormControlConditionDescription2">Condition Description</label>
-                        <input type="text" class="form-control" id="exampleFormControlConditionDescription2" placeholder="Add condition descption if needed...">
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="form-row">
-                    <div class="form-check">
-                      <div class="col-2">
-                        <br><br>
-                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlEbayCheckbox2" checked>
-                        <label class="form-check-label" for="defaultCheck2">eBay</label>
-                        <input class="form-check-input" type="checkbox" value="" id="exampleFormControlAmazonCheckbox2" checked>
-                        <label class="form-check-label" for="defaultCheck2">Amazon</label>
-                      </div>
-                    </div>
-                    <div class="col">
-                      <label for="exampleFormControlNotes2">Notes</label>
-                      <textarea class="form-control" id="exampleFormControlNotes2" rows="3"></textarea>
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="col">
-                      <label for="exampleFormControlCategory2">Category</label>
-                      <input type="text" class="form-control form-control" id="exampleFormControlCategory2" placeholder="Category">
-                    </div>
-
-                    <div class="col">
-                      <label for="exampleFormControlASIN2">ASIN</label>
-                      <input type="text" class="form-control form-control" id="exampleFormControlASIN2" placeholder="ASIN">
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="col">
-                      <label for="exampleFormControlEbayPrice2">eBay Price</label>
-                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlEbayPrice2" value="0.00">
-                    </div>
-                    <div class="col">
-                      <label for="exampleFormControlAmazonPrice2">Amazon Price</label>
-                      <input type="number" min="0.00" max="1000000.00" step="0.01" class="form-control form-control" id="exampleFormControlAmazonPrice2" value="0.00">
-                    </div>
-                  </div>
-                </form>
-
-              </div>
-
-              <div class="col-sm-1 align-self-center">
-                <button type="button" class="btn btn-link btn-xs">
-                  <span data-feather="trash-2" class="feather-big"></span>
-                </button>
-              </div>
             </div>
           </div>
         </div>

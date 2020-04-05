@@ -39,6 +39,13 @@ var PsViewController = function() {
   this.baseSkuName = null;
   this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
 
+  this.itemHtml = fs.readFileSync("./item.html").toString();
+  //var itemHtml = buffer.toString().replace(/__NUM__/gi, 'SKU_1010');
+  //console.log(this.itemHtml);
+
+  // Get Element where the items will be listed
+  this.itemDivBody = document.getElementById('itemDivBody');
+
   // Register Event Handler for New Button Click Events
   this.newButton = document.getElementById('button-new');
   this.newButton.addEventListener('click', event => {
@@ -152,6 +159,11 @@ PsViewController.prototype.createNewProject = function(event) {
     };
   }
 
+  let itemIdText = baseSkuName + '-' + startSkuNum;
+  let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, startSkuNum);
+  this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, itemIdText);
+  document.getElementById("listDivMain").hidden = false;
+
   console.log(this.db.data);
 
   this.db.write();
@@ -170,16 +182,12 @@ var gui = require('nw.gui');
 var win = gui.Window.get();
 win.showDevTools();
 
-let buffer = fs.readFileSync("./item.html");
-var itemHtml = buffer.toString().replace(/__NUM__/gi, 'SKU_1010');
-
 // var os = require('os');
 // console.log('You are running on ', os.platform());
 
 window.addEventListener('load', (event) => {
 
   console.log("Page Loaded, received load event");
-  console.log(itemHtml);
 
   PsApp = new PsViewController();
 
