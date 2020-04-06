@@ -33,6 +33,8 @@ var PsViewController = function() {
   this.gloabalId          = 'GLOBAL-ID=EBAY-US';
   this.siteId             = 'siteid=0';
 
+  this.dataModel = new PsDataModel('./assets/schema/itemdb.json');
+
   var today = new Date();
 
   this.path = null;
@@ -40,8 +42,6 @@ var PsViewController = function() {
   this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
 
   this.itemHtml = fs.readFileSync("./item.html").toString();
-  //var itemHtml = buffer.toString().replace(/__NUM__/gi, 'SKU_1010');
-  //console.log(this.itemHtml);
 
   // Get Element where the items will be listed
   this.itemDivBody = document.getElementById('itemDivBody');
@@ -149,71 +149,46 @@ PsViewController.prototype.dirChanged = function(event) {
 // New Project - Create New Project Button Click Event Handler
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.createNewProject = function(event) {
-  let baseSkuName = this.baseSkuName;
-  let startSkuNum = this.startSkuNum;
-  let path = this.path + '/' + baseSkuName + '-' + startSkuNum + '.json';
-  this.currentFile = path;
-  this.currentSkuNum = startSkuNum;
+  let filePath = this.path + '/' + this.baseSkuName + '-' + this.startSkuNum + '.json';
 
-  // Create new data base object
-  this.db = new JsonDb(path);
+  this.dataModel.initNewDb(filePath, this.baseSkuName, this.startSkuNum);
 
-  // Insert config object into data base
-  if (!this.db.data.hasOwnProperty('config')) {
-    this.db.data.config = {
-      baseSkuName: baseSkuName,
-      startSkuNum: startSkuNum,
-      currentSkuNum: startSkuNum
-    };
-  }
-  this.db.write();
-
-  // Setup UI to add first item
-  // let itemIdText = baseSkuName + '-' + startSkuNum;
-  // let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, startSkuNum);
-  // this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, itemIdText);
+  this.itemDivBody.innerHTML = "";
   document.getElementById("listDivMain").hidden = false;
-
+  document.getElementById("itemMainCard").hidden = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // Add New Item
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.addNewItem = function(event) {
-  let baseSkuName = this.db.data.config.baseSkuName;
-  let currentSkuNum = this.db.data.config.currentSkuNum;
-  let file = this.currentFile;
-  let sku = baseSkuName + currentSkuNum;
+  let nextSku = this.dataModel.getNextSku();
+  let nextSkuNum = this.dataModel.getNextSkuNumber();
 
-  // Setup UI to add first item
-  let itemIdText = baseSkuName + '-' + currentSkuNum;
-  let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, currentSkuNum);
-  this.itemDivBody.innerHTML += htmlString.replace(/__NUM__/gi, itemIdText);
+  // Setup UI with new item to be added
+  let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, nextSku);
+  let bar = (this.itemDivBody.innerHTML == "") ? "" : "<hr>" ;
+
+  this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, nextSkuNum) + bar + this.itemDivBody.innerHTML;
   document.getElementById("itemMainCard").hidden = false;
 
-  this.db.data.config.currentSkuNum = Number(currentSkuNum) + 1;
-
-  if (!this.db.data.hasOwnProperty('items')) {
-    this.db.data.items = {};
-  }
-  this.db.data.items[sku] = {
-    brand:                '',
-    qty:                  '',
-    storageLocation:      '',
-    sku:                  sku,
-    barcode:              '',
-    condition:            '',
-    conditionDescription: '',
-    ebayCheckbox:         '',
-    amazonCheckbox:       '',
-    notes:                '',
-    category:             '',
-    asin:                 '',
-    ebayPrice:            '',
-    amazonPrice:          ''
-  };
-
-  this.db.write();
+  this.dataModel.addNewItem( {
+          brand:                '',
+          qty:                  1,
+          storageLocation:      '',
+          sku:                  '',
+          barcode:              '',
+          condition:            'New',
+          conditionDescription: '',
+          ebayCheckbox:         true,
+          amazonCheckbox:       true,
+          notes:                '',
+          category:             '',
+          asin:                 '',
+          ebayPrice:            0.00,
+          amazonPrice:          0.00,
+          photoList:            []
+  });
 
 }
 

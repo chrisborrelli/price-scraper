@@ -29,8 +29,6 @@ var JsonDb = function(path) {
   this.path = (path) ? path : ('./db_' + Math.floor(Date.now() / 1000 ) );
   this.data = {};
 
-  console.log("path = " + this.path);
-
   const exists = fs.existsSync(this.path);
   if (!exists) {
     fs.writeFileSync(this.path, JSON.stringify({}));
@@ -54,5 +52,5 @@ JsonDb.prototype.read = function() {
 }
 
 JsonDb.prototype.write = function() {
-  fs.writeFileSync(this.path, JSON.stringify(this.data, null, 4));
+  fs.writeFileSync(this.path, JSON.stringify(this.data, null, 2));
 }

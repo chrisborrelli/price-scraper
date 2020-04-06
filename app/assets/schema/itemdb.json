@@ -1,0 +1,105 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$ref": "#/definitions/PSDataModel",
+    "definitions": {
+        "PSDataModel": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "Config": {
+                    "$ref": "#/definitions/Config"
+                },
+                "ItemList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ItemList"
+                    }
+                }
+            },
+            "required": [
+                "Config",
+                "ItemList"
+            ],
+            "title": "PSDataModel"
+        },
+        "Config": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "baseSkuName": {
+                    "type": "string"
+                },
+                "startSkuNum": {
+                    "type": "string",
+                    "format": "integer"
+                },
+                "currentSkuNum": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "baseSkuName",
+                "currentSkuNum",
+                "startSkuNum"
+            ],
+            "title": "Config"
+        },
+        "ItemList": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "integer"
+                },
+                "storageLocation": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "condition": {
+                    "type": "string",
+                    "enum": ["New", "New/Other", "Used"]
+                },
+                "conditionDescription": {
+                    "type": "string"
+                },
+                "ebayCheckbox": {
+                    "type": "boolean"
+                },
+                "amazonCheckbox": {
+                    "type": "boolean"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "asin": {
+                    "type": "string"
+                },
+                "ebayPrice": {
+                    "type": "number"
+                },
+                "amazonPrice": {
+                    "type": "number"
+                },
+                "photoList": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [],
+            "title": "ItemList"
+        }
+    }
+}
