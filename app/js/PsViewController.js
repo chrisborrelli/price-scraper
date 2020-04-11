@@ -46,6 +46,21 @@ var PsViewController = function() {
   // Get Element where the items will be listed
   this.itemDivBody = document.getElementById('itemDivBody');
 
+  this.itemDivBody.addEventListener('click', event => {
+    console.log(event);
+  });
+  this.itemDivBody.addEventListener('input', event => {
+    console.log("INPUT: " + event.target.id);
+  });
+  this.itemDivBody.addEventListener('change', event => {
+    console.log("CHANGE: " + event.target.id);
+  });
+  this.itemDivBody.addEventListener('keyup', event => {
+    if (event.key == "Tab") {
+      console.log("Tab to: " + event.target.id);
+    }
+  });
+
   // Register Event Handler for New Button Click Events
   this.newButton = document.getElementById('button-new');
   this.newButton.addEventListener('click', event => {
@@ -119,16 +134,8 @@ PsViewController.prototype.getResults = function() {
 // newButtonClick Event Handler
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.newButtonClick = function(event) {
-  //console.log(event);
-  //console.log(this.newButton);
-  //this.newButton.innerHTML = `New: ${event.detail}`;
 
-  // Open new window to setup new project
-
-  //nw.Window.open("newProj.html", {focus: true}, function(new_win) {
-  //  console.log("Created new window.");
-  //});
-
+  // TODO: Should we save out the database at this point?
 
 }
 
@@ -151,6 +158,10 @@ PsViewController.prototype.dirChanged = function(event) {
 PsViewController.prototype.createNewProject = function(event) {
   let filePath = this.path + '/' + this.baseSkuName + '-' + this.startSkuNum + '.json';
 
+  // TODO: what should we do if there is an existing data model object?
+  //       Should the data model object serialize itself before starting a new
+  //       initNewDb? Probably...
+
   this.dataModel.initNewDb(filePath, this.baseSkuName, this.startSkuNum);
 
   this.itemDivBody.innerHTML = "";
@@ -171,6 +182,9 @@ PsViewController.prototype.addNewItem = function(event) {
 
   this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, nextSkuNum) + bar + this.itemDivBody.innerHTML;
   document.getElementById("itemMainCard").hidden = false;
+
+  // draw any feathers on the new gui element..
+  feather.replace();
 
   this.dataModel.addNewItem( {
           brand:                '',

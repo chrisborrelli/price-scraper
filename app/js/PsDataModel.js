@@ -67,10 +67,34 @@ PsDataModel.prototype.addNewItem = function(item) {
   }
 
   item.sku = this.getNextSku();
+
+  // Add new item to start of the list
   this.db.data.ItemList.unshift (item);
+
+  // Write database to disk
   this.db.write();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Edit Item
+/////////////////////////////////////////////////////////////////////////////
+PsDataModel.prototype.editItem = function(item) {
+  let idx = this.findIndexBySku(item.sku);
+  if (idx >= 0) {
+    console.log("Found Item at index " + idx);
+  }
+  else {
+    console.log("Item not found in database:\n" + item);
+    return false;
+  }
+
+  this.db.data.ItemList[idx] = item;
+  this.db.write();
+  return true;
 
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // Get Next Sku Number
@@ -85,7 +109,6 @@ PsDataModel.prototype.getNextSkuNumber = function() {
 PsDataModel.prototype.getNextSku = function() {
   return this.db.data.Config.baseSkuName + this.sep + this.getNextSkuNumber();
 }
-
 
 /////////////////////////////////////////////////////////////////////////////
 // Find and FindIndex by Sku or SkuNum

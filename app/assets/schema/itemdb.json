@@ -32,9 +32,6 @@
                 "startSkuNum": {
                     "type": "string",
                     "format": "integer"
-                },
-                "currentSkuNum": {
-                    "type": "integer"
                 }
             },
             "required": [
