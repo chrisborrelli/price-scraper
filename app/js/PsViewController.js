@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 // Copyright (c) 2020 Chris Borrelli
 //
-//Permission is hereby granted, free of charge, to any person obtaining a copy
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -41,25 +41,33 @@ var PsViewController = function() {
   this.baseSkuName = null;
   this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
 
+  this.itemListUiState = {
+    pendingChanges: false,
+    activeSkuNum: -1,
+    activeFieldName: ""
+  };
+
   this.itemHtml = fs.readFileSync("./item.html").toString();
 
   // Get Element where the items will be listed
   this.itemDivBody = document.getElementById('itemDivBody');
 
-  this.itemDivBody.addEventListener('click', event => {
-    console.log(event);
-  });
-  this.itemDivBody.addEventListener('input', event => {
-    console.log("INPUT: " + event.target.id);
-  });
-  this.itemDivBody.addEventListener('change', event => {
-    console.log("CHANGE: " + event.target.id);
-  });
-  this.itemDivBody.addEventListener('keyup', event => {
-    if (event.key == "Tab") {
-      console.log("Tab to: " + event.target.id);
-    }
-  });
+  // Send List Events to a common event handler
+  this.itemDivBody.addEventListener('click', function(event) {
+    this.listUiEventHandler(event);
+  }.bind(this));
+
+  this.itemDivBody.addEventListener('input', function(event) {
+    this.listUiEventHandler(event);
+  }.bind(this));
+
+  this.itemDivBody.addEventListener('change', event => function(event) {
+    this.listUiEventHandler(event);
+  }.bind(this));
+
+  this.itemDivBody.addEventListener('keyup', function(event) {
+    this.listUiEventHandler(event);
+  }.bind(this));
 
   // Register Event Handler for New Button Click Events
   this.newButton = document.getElementById('button-new');
@@ -98,6 +106,53 @@ var PsViewController = function() {
     this.addNewItem(event);
   }.bind(this));
 
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Event Handler for List of Items UI - clicks, inputs, changes, keyups
+/////////////////////////////////////////////////////////////////////////////
+PsViewController.prototype.listUiEventHandler = function() {
+  const type = event.type;
+  const targetId = event.target.id;
+
+  if (targetId.length == 0) {
+    return;
+  }
+
+  const splitStr = targetId.split('_');
+  const skuNum = splitStr[splitStr.length-1];
+  const fieldName = splitStr[0];
+
+  // Copy state to see if anything changed..
+  const previousState = Object.assign({}, this.itemListUiState);
+
+  // update current state based on current event
+  this.itemListUiState.activeSkuNum = skuNum;
+  this.itemListUiState.activeFieldName = fieldName;
+
+  if (previousState.activeSkuNum != this.itemListUiState.activeSkuNum) {
+     this.activeItem = this.dataModel.getItemBySkuNum(skuNum);
+  }
+
+  switch (type) {
+    case 'click':
+      this.dataModel.saveData();
+      break;
+    case 'input':
+    case 'change':
+      this.activeItem[fieldName] = event.srcElement.value;
+      //console.log(event.srcElement.value);
+      //console.log(this.activeItem);
+
+      break;
+    case 'keyup':
+      if (event.key == "Tab") {
+        //console.log("Tab to: " + event.target.id);
+        this.dataModel.saveData();
+      }
+      break;
+    default:
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -167,6 +222,7 @@ PsViewController.prototype.createNewProject = function(event) {
   this.itemDivBody.innerHTML = "";
   document.getElementById("listDivMain").hidden = false;
   document.getElementById("itemMainCard").hidden = true;
+  this.loadItems();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -180,7 +236,9 @@ PsViewController.prototype.addNewItem = function(event) {
   let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, nextSku);
   let bar = (this.itemDivBody.innerHTML == "") ? "" : "<hr>" ;
 
-  this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, nextSkuNum) + bar + this.itemDivBody.innerHTML;
+  this.itemDivBody.insertAdjacentHTML('afterbegin', htmlString.replace(/__NUM__/gi, nextSkuNum) + bar);
+
+  //this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, nextSkuNum) + bar + this.itemDivBody.innerHTML;
   document.getElementById("itemMainCard").hidden = false;
 
   // draw any feathers on the new gui element..
@@ -203,6 +261,39 @@ PsViewController.prototype.addNewItem = function(event) {
           amazonPrice:          0.00,
           photoList:            []
   });
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Load Items
+/////////////////////////////////////////////////////////////////////////////
+PsViewController.prototype.loadItems = function() {
+  this.itemDivBody.innerHTML == "";
+
+  document.getElementById("itemMainCard").hidden = false;
+
+  console.log(this.dataModel.db.data.ItemList.length);
+
+  for (let i=0 ; i<this.dataModel.db.data.ItemList.length ; i++) {
+    let item = this.dataModel.getItemByIdx(i);
+    let sku = item.sku
+    let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, sku);
+    let bar = (this.itemDivBody.innerHTML == "") ? "" : "<hr>" ;
+    let splitStr = sku.split('-');
+    let skuNum = splitStr[splitStr.length-1];
+
+    this.itemDivBody.insertAdjacentHTML('beforeend', bar + htmlString.replace(/__NUM__/gi, skuNum));
+
+    for (const [key, value] of Object.entries(item)) {
+      let webKey = key + '_' + skuNum;
+      console.log("webKey: " + webKey + ' :: ' + value);
+      if (key != "photoList") {
+        document.getElementById(webKey).value = value;
+      }
+    }
+  }
+
+  // draw any feathers on the new gui element..
+  feather.replace();
 
 }
 
