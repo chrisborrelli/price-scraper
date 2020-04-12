@@ -269,9 +269,11 @@ PsViewController.prototype.addNewItem = function(event) {
 PsViewController.prototype.loadItems = function() {
   this.itemDivBody.innerHTML == "";
 
-  document.getElementById("itemMainCard").hidden = false;
+  if (this.dataModel.db.data.ItemList.length > 0) {
+    document.getElementById("itemMainCard").hidden = false;
+  }
 
-  console.log(this.dataModel.db.data.ItemList.length);
+  //console.log(this.dataModel.db.data.ItemList.length);
 
   for (let i=0 ; i<this.dataModel.db.data.ItemList.length ; i++) {
     let item = this.dataModel.getItemByIdx(i);
@@ -285,7 +287,7 @@ PsViewController.prototype.loadItems = function() {
 
     for (const [key, value] of Object.entries(item)) {
       let webKey = key + '_' + skuNum;
-      console.log("webKey: " + webKey + ' :: ' + value);
+      //console.log("webKey: " + webKey + ' :: ' + value);
       if (key != "photoList") {
         document.getElementById(webKey).value = value;
       }
