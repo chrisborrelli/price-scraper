@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.6">
+  <title>Listing Builder</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <meta name="theme-color" content="#563d7c">
+
+  <!-- Custom styles for this template -->
+  <link href="css/dashboard.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="https://github.com/chrisborrelli/price-scraper">Price Scraper</a>
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link" href="https://github.com/chrisborrelli/price-scraper">Git Hub</a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <span data-feather="home"></span>Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="camera"></span>
+                Orders
+              </a>
+            </li>
+          </ul>
+
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Heading</span>
+            <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
+              <span data-feather="plus-circle"></span>
+            </a>
+          </h6>
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Link 1
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Link 2
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span data-feather="file-text"></span>
+                Link 3
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <!-- New Project Modal -->
+        <div class="modal fade" id="newProjectDialog" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">New Listing Project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+              <div class="modal-body">
+
+                <div class="card border-0">New Project Directory</div>
+                <div class="custom-file">
+                  <input type="file" nwdirectory class="custom-file-input" id="dirChooser">
+                  <label class="custom-file-label" id="dirChooserLabel" for="dirChooser">Choose directory</label>
+                </div>
+
+                <div class="form-row">
+                  <div class="col-8">
+                    <label for="newProjectConfigBaseName">SKU Base Name</label>
+                    <input type="text" class="form-control" id="newProjectConfigBaseName" placeholder="">
+                  </div>
+
+                  <div class="col">
+                    <label for="newProjectConfigStartSKU">Start SKU Number</label>
+                    <input type="number" class="form-control" id="newProjectConfigStartSKU" value="10001">
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <div class="col-6">
+                    <label for="newProjectConfigPhotoFileExt">Photo File Extension</label>
+                    <input type="text" class="form-control" id="newProjectConfigPhotoFileExt" value="cr2">
+                  </div>
+
+                  <div class="col-6">
+                    <label for="newProjectConfigPhotoConvertedFileExt">Photo Converted File Extension</label>
+                    <input type="text" class="form-control" id="newProjectConfigPhotoConvertedFileExt" value="jpg">
+                  </div>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="createProjectButton" class="btn btn-primary" data-dismiss="modal" disabled>Create</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Listing Builder</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button type="button" id="button-new" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#newProjectDialog">New</button>
+              <button type="button" id="button-open" class="btn btn-sm btn-outline-secondary">Open</button>
+              <button type="button" id="button-close" class="btn btn-sm btn-outline-secondary">Close</button>
+
+            </div>
+          </div>
+        </div>
+
+        <div id="listDivMain" hidden=true>
+          <h2>Items
+            <button id="addNewItemButton" type="button" class="btn btn-link btn-xs">
+              <span data-feather="plus-circle" class="feather-big"></span>
+            </button>
+          </h2>
+
+          <div class="card" id="itemMainCard" hidden=true>
+            <div class="card-body" id="itemDivBody">
+
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="js/vendor/jquery.slim.min.js"></script>
+  <script src="bootstrap-4.4.1-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/vendor/feather.min.js"></script>
+  <script src="js/JsonDb.js"></script>
+  <script src="js/PsDataModel.js"></script>
+  <script src="js/PsViewController.js"></script>
+
+</body>
+
+</html>
