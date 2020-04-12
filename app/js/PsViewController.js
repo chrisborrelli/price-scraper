@@ -37,9 +37,13 @@ var PsViewController = function() {
 
   var today = new Date();
 
-  this.path = null;
-  this.baseSkuName = null;
+  this.path = "";
+  this.baseSkuName = "";
   this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
+  this.photoExt = document.getElementById('newProjectConfigPhotoFileExt').value;
+  this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;;
+
+
 
   this.itemListUiState = {
     pendingChanges: false,
@@ -95,6 +99,20 @@ var PsViewController = function() {
     this.tryEnableCreateButton();
   }.bind(this));
 
+  // Register Event Handler for Photo File Extension
+  document.getElementById('newProjectConfigPhotoFileExt').addEventListener('input', function(event) {
+    let element = document.getElementById(event.target.id);
+    this.photoExt = element.value;
+    this.tryEnableCreateButton();
+  }.bind(this));
+
+  // Register Event Handler for Photo Converted File Extension Change
+  document.getElementById('newProjectConfigPhotoConvertedFileExt').addEventListener('input', function(event) {
+    let element = document.getElementById(event.target.id);
+    this.photoConvExt = element.value;
+    this.tryEnableCreateButton();
+  }.bind(this));
+
   // Register Event Handler for New Project Create Button
   this.dirChooser = document.getElementById('createProjectButton');
   this.dirChooser.addEventListener("click", function(event) {
@@ -147,7 +165,6 @@ PsViewController.prototype.listUiEventHandler = function() {
       break;
     case 'keyup':
       if (event.key == "Tab") {
-        //console.log("Tab to: " + event.target.id);
         this.dataModel.saveData();
       }
       break;
@@ -159,8 +176,11 @@ PsViewController.prototype.listUiEventHandler = function() {
 // Try to Enable Create Button
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.tryEnableCreateButton = function() {
-  if (this.baseSkuName != null && this.path != null && this.startSkuNum != null) {
+  if (this.baseSkuName != "" && this.path != "" && this.startSkuNum != "" && this.photoExt != "" && this.photoConvExt != "") {
     document.getElementById('createProjectButton').removeAttribute('disabled');
+  }
+  else {
+    document.getElementById('createProjectButton').setAttribute('disabled', "");
   }
 }
 
@@ -223,6 +243,10 @@ PsViewController.prototype.createNewProject = function(event) {
   document.getElementById("listDivMain").hidden = false;
   document.getElementById("itemMainCard").hidden = true;
   this.loadItems();
+
+  fs.watch(this.path, function(event, trigger) {
+    console.log("new file: " + trigger);
+  }.bind(this));
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -272,8 +296,6 @@ PsViewController.prototype.loadItems = function() {
   if (this.dataModel.db.data.ItemList.length > 0) {
     document.getElementById("itemMainCard").hidden = false;
   }
-
-  //console.log(this.dataModel.db.data.ItemList.length);
 
   for (let i=0 ; i<this.dataModel.db.data.ItemList.length ; i++) {
     let item = this.dataModel.getItemByIdx(i);
