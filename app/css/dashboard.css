@@ -76,6 +76,19 @@ body {
   }
 }
 
+.top-bottom-spread {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.top-spread {
+    margin-top: 12px;
+}
+
+.activeItem {
+    background-color: lightyellow;
+}
+
 .feather-big {width: 32px; height: 32px}
 
 /*
