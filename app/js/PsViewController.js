@@ -41,9 +41,7 @@ var PsViewController = function() {
   this.baseSkuName = "";
   this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
   this.photoExt = document.getElementById('newProjectConfigPhotoFileExt').value;
-  this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;;
-
-
+  this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;
 
   this.itemListUiState = {
     pendingChanges: false,
@@ -149,7 +147,16 @@ PsViewController.prototype.listUiEventHandler = function() {
   this.itemListUiState.activeFieldName = fieldName;
 
   if (previousState.activeSkuNum != this.itemListUiState.activeSkuNum) {
-     this.activeItem = this.dataModel.getItemBySkuNum(skuNum);
+    this.activeItem = this.dataModel.getItemBySkuNum(skuNum);
+
+    // Setup background colors of previous and new active item
+    let itemDivName = 'itemDiv_' + skuNum;
+    let prevItemDivName = 'itemDiv_' + previousState.activeSkuNum;
+    if (previousState.activeSkuNum >= 0) {
+      console.log(previousState.activeSkuNum);
+      document.getElementById(prevItemDivName).style['background-color'] = '';
+    }
+    document.getElementById(itemDivName).style['background-color'] = 'lightyellow';
   }
 
   switch (type) {
@@ -244,8 +251,36 @@ PsViewController.prototype.createNewProject = function(event) {
   document.getElementById("itemMainCard").hidden = true;
   this.loadItems();
 
-  fs.watch(this.path, function(event, trigger) {
-    console.log("new file: " + trigger);
+  fs.watch(this.path, function(eventType, fn) {
+    if (eventType == 'rename' && fn.split('.').pop() == this.photoExt) {
+      
+      //this.photoConvExt
+      if (this.activeItem) {
+
+        // Convert file extension for adding or deleting the file
+        let newFileName = fn.split('.');
+        newFileName.pop();
+        newFileName = newFileName.join('') + '.' + this.photoConvExt;
+
+        // check if adding or deleting a file
+        let path = this.path + '/' + fn;
+        if (fs.existsSync(path)) {
+          this.activeItem.photoList.push(newFileName);
+          console.log("New File: " + newFileName);
+        }
+        else {
+          let idxDelete = this.activeItem.photoList.indexOf(newFileName);
+          console.log(idxDelete);
+          if (idxDelete != -1) {
+            this.activeItem.photoList.splice(idxDelete,1);
+            console.log(this.activeItem.photoList);
+          }
+          console.log("File Deleted: " + fn);
+        }
+        this.dataModel.saveData();
+        this.generatePhotoList(this.activeItem.photoList, "photoList_" + this.itemListUiState.activeSkuNum);
+      }
+    }
   }.bind(this));
 }
 
@@ -313,6 +348,9 @@ PsViewController.prototype.loadItems = function() {
       if (key != "photoList") {
         document.getElementById(webKey).value = value;
       }
+      else {
+        this.generatePhotoList(value, webKey);
+      }
     }
   }
 
@@ -321,7 +359,22 @@ PsViewController.prototype.loadItems = function() {
 
 }
 
-
+/////////////////////////////////////////////////////////////////////////////
+// generatePhotoList
+/////////////////////////////////////////////////////////////////////////////
+PsViewController.prototype.generatePhotoList = function(pList, id) {
+  let photoListDiv = document.getElementById(id);
+ 
+  // Clear the list (regen whole list from scratch)
+  while (photoListDiv.firstChild) {
+    photoListDiv.removeChild(photoListDiv.firstChild);
+  }
+  photoListDiv.insertAdjacentHTML('beforeend', '<ul>');
+  for (let p=0 ; p<pList.length ; p++) {
+    photoListDiv.insertAdjacentHTML('beforeend', '<li>' + pList[p] + '</li>');
+  }
+  photoListDiv.insertAdjacentHTML('beforeend', '</ul>');
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // Main Code Entry Point
