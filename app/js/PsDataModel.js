@@ -25,6 +25,8 @@ var PsDataModel = function(schemaPath) {
   this.filePath = null;
   this.baseSkuName = null;
   this.startSkuNum = null;
+  this.photoExt = null;
+  this.photoConvExt = null;
 
   this.schema = new JsonDb(schemaPath);
   this.db = null;
@@ -36,12 +38,14 @@ var PsDataModel = function(schemaPath) {
 /////////////////////////////////////////////////////////////////////////////
 // New Project - Create New Project Button Click Event Handler
 /////////////////////////////////////////////////////////////////////////////
-PsDataModel.prototype.initNewDb = function(filePath, baseSkuName, startSkuNum) {
+PsDataModel.prototype.initNewDb = function(filePath, baseSkuName, startSkuNum, photoExt, photoConvExt) {
 
   // Store info for later use
   this.filePath = filePath;
   this.baseSkuName = baseSkuName;
   this.startSkuNum = startSkuNum;
+  this.photoExt = photoExt;
+  this.photoConvExt = photoConvExt;
 
   // Create new data base object
   this.db = new JsonDb(filePath);
@@ -51,11 +55,12 @@ PsDataModel.prototype.initNewDb = function(filePath, baseSkuName, startSkuNum) {
     this.db.data.Config = {
       baseSkuName: baseSkuName,
       startSkuNum: startSkuNum,
+      photoExt: photoExt,
+      photoConvExt: photoConvExt
     };
     this.db.data.ItemList = [];
   }
   this.db.write();
-
 }
 
 /////////////////////////////////////////////////////////////////////////////

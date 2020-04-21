@@ -238,21 +238,23 @@ PsViewController.prototype.dirChanged = function(event) {
 // New Project - Create New Project Button Click Event Handler
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.createNewProject = function(event) {
-  let filePath = this.path + '/' + this.baseSkuName + '-' + this.startSkuNum + '.json';
+  let sep = this.dataModel.sep;
+  let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.json';
 
   // TODO: what should we do if there is an existing data model object?
   //       Should the data model object serialize itself before starting a new
   //       initNewDb? Probably...
 
-  this.dataModel.initNewDb(filePath, this.baseSkuName, this.startSkuNum);
+  this.dataModel.initNewDb(filePath, this.baseSkuName, this.startSkuNum, this.photoExt, this.photoConvExt);
 
   this.itemDivBody.innerHTML = "";
   document.getElementById("listDivMain").hidden = false;
   document.getElementById("itemMainCard").hidden = true;
   this.loadItems();
 
+  // TODO: refactor and move this callback to a memnber function...
   fs.watch(this.path, function(eventType, fn) {
-    if (eventType == 'rename' && fn.split('.').pop() == this.photoExt) {
+    if (eventType == 'rename' && fn.split('.').pop().toLowerCase() == this.photoExt.toLowerCase()) {
       
       //this.photoConvExt
       if (this.activeItem) {
@@ -265,17 +267,15 @@ PsViewController.prototype.createNewProject = function(event) {
         // check if adding or deleting a file
         let path = this.path + '/' + fn;
         if (fs.existsSync(path)) {
-          this.activeItem.photoList.push(newFileName);
-          console.log("New File: " + newFileName);
+          if (this.activeItem.photoList.indexOf(newFileName) == -1) {
+            this.activeItem.photoList.push(newFileName);
+          }
         }
         else {
           let idxDelete = this.activeItem.photoList.indexOf(newFileName);
-          console.log(idxDelete);
           if (idxDelete != -1) {
             this.activeItem.photoList.splice(idxDelete,1);
-            console.log(this.activeItem.photoList);
           }
-          console.log("File Deleted: " + fn);
         }
         this.dataModel.saveData();
         this.generatePhotoList(this.activeItem.photoList, "photoList_" + this.itemListUiState.activeSkuNum);
