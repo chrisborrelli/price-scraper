@@ -76,6 +76,14 @@ var PsViewController = function() {
   this.newButton.addEventListener('click', event => {
     this.newButtonClick(event);
   });
+  
+  // Register Event Handler for Export Button Click Events
+  this.newButton = document.getElementById('button-export');
+  this.newButton.addEventListener('click', event => {
+    let sep = this.dataModel.sep;
+    let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.csv';
+    fs.writeFileSync(filePath, Papa.unparse(this.dataModel.db.data.ItemList, {quotes: true, delimiter: ","}));
+  });
 
   // Register Event Handler for Directory Chooser Event
   this.dirChooser = document.getElementById('dirChooser');
