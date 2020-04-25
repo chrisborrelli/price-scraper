@@ -20,6 +20,8 @@
 // SOFTWARE.
 //---------------------------------------------------------------------------------
 
+const C_ArraySeparaterPhoto = ';'
+
 var PsDataModel = function(schemaPath) {
 
   this.filePath = null;
@@ -60,6 +62,15 @@ PsDataModel.prototype.initNewDb = function(filePath, baseSkuName, startSkuNum, p
     };
     this.db.data.ItemList = [];
   }
+  else {
+    // Override the toString property for photoList array
+    for (let i=0 ; i<this.db.data.ItemList.length ; i++) {
+      let item = this.db.data.ItemList[i];
+      item.photoList.toString = function() {
+        return this.join(C_ArraySeparaterPhoto);
+      }
+    }
+  }
   this.db.write();
 }
 
@@ -81,6 +92,11 @@ PsDataModel.prototype.addNewItem = function(item) {
 
   item.sku = this.getNextSku();
 
+  // Override the toString property for photoList array
+  item.photoList.toString = function() {
+    return this.join(C_ArraySeparaterPhoto);
+  }
+  
   // Add new item to start of the list
   this.db.data.ItemList.unshift (item);
 
