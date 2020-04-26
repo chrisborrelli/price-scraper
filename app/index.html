@@ -74,6 +74,7 @@
       </nav>
 
       <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
         <!-- New Project Modal -->
         <div class="modal fade" id="newProjectDialog" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
@@ -122,7 +123,10 @@
             </div>
           </div>
         </div>
-
+        
+        <!-- Hidden File Input for Open Project Button, programmatically hidden in javascript  -->
+        <input type="file" accept=".json" id="openProjectFile"/>
+            
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 class="h2">Listing Builder</h1>
           <div class="btn-toolbar mb-2 mb-md-0">

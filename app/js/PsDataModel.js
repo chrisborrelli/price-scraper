@@ -23,24 +23,20 @@
 const C_ArraySeparaterPhoto = ';'
 
 var PsDataModel = function(schemaPath) {
-
   this.filePath = null;
   this.baseSkuName = null;
   this.startSkuNum = null;
   this.photoExt = null;
   this.photoConvExt = null;
-
   this.schema = new JsonDb(schemaPath);
   this.db = null;
-
   this.sep = '-';
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // New Project - Create New Project Button Click Event Handler
 /////////////////////////////////////////////////////////////////////////////
-PsDataModel.prototype.initNewDb = function(filePath, baseSkuName, startSkuNum, photoExt, photoConvExt) {
+PsDataModel.prototype.initDb = function(filePath, baseSkuName, startSkuNum, photoExt, photoConvExt) {
 
   // Store info for later use
   this.filePath = filePath;
@@ -63,6 +59,12 @@ PsDataModel.prototype.initNewDb = function(filePath, baseSkuName, startSkuNum, p
     this.db.data.ItemList = [];
   }
   else {
+    // Pull Config from existing file
+    this.baseSkuName = this.db.data.Config.baseSkuName;
+    this.startSkuNum = this.db.data.Config.startSkuNum;
+    this.photoExt = this.db.data.Config.photoExt;
+    this.photoConvExt = this.db.data.Config.photoConvExt;
+    
     // Override the toString property for photoList array
     for (let i=0 ; i<this.db.data.ItemList.length ; i++) {
       let item = this.db.data.ItemList[i];
@@ -78,7 +80,30 @@ PsDataModel.prototype.initNewDb = function(filePath, baseSkuName, startSkuNum, p
 // Save Data to Disk
 /////////////////////////////////////////////////////////////////////////////
 PsDataModel.prototype.saveData = function() {
-  this.db.write();
+  if (this.isOpen()) {
+    this.db.write();
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Check if data base is open
+/////////////////////////////////////////////////////////////////////////////
+PsDataModel.prototype.isOpen = function() {
+  return (this.db == null) ? false : true;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Check if data base is open
+/////////////////////////////////////////////////////////////////////////////
+PsDataModel.prototype.close = function() {
+  if (this.isOpen()) {
+    this.filePath = null;
+    this.baseSkuName = null;
+    this.startSkuNum = null;
+    this.photoExt = null;
+    this.photoConvExt = null;
+    this.db = null;
+  }
 }
 
 
@@ -120,7 +145,6 @@ PsDataModel.prototype.editItem = function(item) {
   this.db.data.ItemList[idx] = item;
   this.db.write();
   return true;
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
