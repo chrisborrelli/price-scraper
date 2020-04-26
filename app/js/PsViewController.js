@@ -53,6 +53,10 @@ var PsViewController = function() {
 
   // Get Element where the items will be listed
   this.itemDivBody = document.getElementById('itemDivBody');
+  
+  // Disable Export and Close buttons
+  document.getElementById('button-close').setAttribute('disabled', "");
+  document.getElementById('button-export').setAttribute('disabled', "");
 
   // Send List Events to a common event handler
   this.itemDivBody.addEventListener('click', function(event) {
@@ -73,16 +77,37 @@ var PsViewController = function() {
 
   // Register Event Handler for New Button Click Events
   this.newButton = document.getElementById('button-new');
-  this.newButton.addEventListener('click', event => {
-    this.newButtonClick(event);
-  });
   
+  // Register Event Handler for Open Button Click Events
+  this.openFileInput = document.getElementById('openProjectFile');
+  this.openFileInput.style.display = "none";
+
+  this.openButton = document.getElementById('button-open');
+  this.openButton.addEventListener('click', event => {
+    this.openFileInput.click(); // call click event on file input element
+  });
+
+  // Register Event Handler for Open Project File Selection Events
+  const nodePath = require('path');
+  this.openFileInput.addEventListener('change', event => {
+    let filePath = event.target.value;
+    this.path = nodePath.posix.dirname(filePath);
+    //console.log(nodePath.posix.dirname(filePath));
+    //console.log(nodePath.posix.basename(filePath));
+    this.createNewProject(filePath);
+  });
+
   // Register Event Handler for Export Button Click Events
   this.newButton = document.getElementById('button-export');
   this.newButton.addEventListener('click', event => {
-    let sep = this.dataModel.sep;
-    let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.csv';
-    fs.writeFileSync(filePath, Papa.unparse(this.dataModel.db.data.ItemList, {quotes: true, delimiter: ","}));
+    if (this.dataModel.isOpen()) {
+      let sep = this.dataModel.sep;
+      let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.csv';
+      fs.writeFileSync(filePath, Papa.unparse(this.dataModel.db.data.ItemList, {quotes: true, delimiter: ","}));
+    }
+    else {
+      window.alert("No project open to export.");
+    }
   });
 
   // Register Event Handler for Directory Chooser Event
@@ -122,13 +147,41 @@ var PsViewController = function() {
   // Register Event Handler for New Project Create Button
   this.dirChooser = document.getElementById('createProjectButton');
   this.dirChooser.addEventListener("click", function(event) {
-    this.createNewProject(event);
+    this.createNewProject();
   }.bind(this));
 
   // Register Event Handler for Add New Item Button
   document.getElementById('addNewItemButton').addEventListener("click", function(event) {
     this.addNewItem(event);
   }.bind(this));
+
+  // Register Event Handler for Add New Item Button
+  document.getElementById('button-close').addEventListener("click", function(event) {
+    if(this.dataModel.isOpen()) {
+      this.dataModel.close();
+      this.path = "";
+      this.baseSkuName = "";
+      this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
+      this.photoExt = document.getElementById('newProjectConfigPhotoFileExt').value;
+      this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;
+
+      this.itemListUiState = {
+        pendingChanges: false,
+        activeSkuNum: -1,
+        activeFieldName: ""
+      };
+      this.itemDivBody.innerHTML = "";
+      document.getElementById("listDivMain").hidden = true;
+      document.getElementById("itemMainCard").hidden = true;
+      document.getElementById('button-close').setAttribute('disabled', "");
+      document.getElementById('button-export').setAttribute('disabled', "");
+      this.openFileInput.value="";
+    }
+    else {
+      window.alert("No project is open.");
+    }
+  }.bind(this));
+  
 
 }
 
@@ -161,7 +214,7 @@ PsViewController.prototype.listUiEventHandler = function() {
     let itemDivName = 'itemDiv_' + skuNum;
     let prevItemDivName = 'itemDiv_' + previousState.activeSkuNum;
     if (previousState.activeSkuNum >= 0) {
-      console.log(previousState.activeSkuNum);
+      //console.log(previousState.activeSkuNum);
       document.getElementById(prevItemDivName).style['background-color'] = '';
     }
     document.getElementById(itemDivName).style['background-color'] = 'lightyellow';
@@ -221,15 +274,6 @@ PsViewController.prototype.getResults = function() {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// newButtonClick Event Handler
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.newButtonClick = function(event) {
-
-  // TODO: Should we save out the database at this point?
-
-}
-
-/////////////////////////////////////////////////////////////////////////////
 // New Project - Directory Changed Event Handler
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.dirChanged = function(event) {
@@ -245,19 +289,35 @@ PsViewController.prototype.dirChanged = function(event) {
 /////////////////////////////////////////////////////////////////////////////
 // New Project - Create New Project Button Click Event Handler
 /////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.createNewProject = function(event) {
+PsViewController.prototype.createNewProject = function(existingFile) {
   let sep = this.dataModel.sep;
-  let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.json';
+
+  let filePath = existingFile;
+  
+  if (!existingFile) {
+    filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.json';
+  }
 
   // TODO: what should we do if there is an existing data model object?
   //       Should the data model object serialize itself before starting a new
   //       initNewDb? Probably...
 
-  this.dataModel.initNewDb(filePath, this.baseSkuName, this.startSkuNum, this.photoExt, this.photoConvExt);
+  this.dataModel.initDb(filePath, this.baseSkuName, this.startSkuNum, this.photoExt, this.photoConvExt);
+  
+  // Grab data from Config if they are null at this level (like when opening existing data base)
+  // TODO: should we just reach into the datamodel instead of storing these twice???
+  if (!this.baseSkuName) {
+    this.baseSkuName = this.dataModel.db.data.Config.baseSkuName;
+    this.startSkuNum = this.dataModel.db.data.Config.startSkuNum;
+    this.photoExt = this.dataModel.db.data.Config.photoExt;
+    this.photoConvExt = this.dataModel.db.data.Config.photoConvExt;
+  }
 
   this.itemDivBody.innerHTML = "";
   document.getElementById("listDivMain").hidden = false;
   document.getElementById("itemMainCard").hidden = true;
+  document.getElementById('button-close').removeAttribute('disabled');
+  document.getElementById('button-export').removeAttribute('disabled');
   this.loadItems();
 
   // TODO: refactor and move this callback to a memnber function...
