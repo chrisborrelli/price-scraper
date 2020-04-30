@@ -1,6 +1,7 @@
 # Price Scraper
 
-This project is intended to help obtain historical pricing information from past auctions.
+This project is intended to help create listings with photos via tethered camera. 
+Future work will obtain historical pricing information from past auctions.
 
 A list of part numbers is provided as input, and the script outputs a list of part numbers with the most recent N selling prices.
 
@@ -33,7 +34,7 @@ The output is a CSV with the following column format. In this example, the numbe
 
 ## Platform / Language
 
-This project could be implemented in a variety of programming languages. The top two choices at this moment are Python and Javascipt on Electron.
+This project is written in Javascipt and uses bootstrap & nwjs frameworks. It is intended that all code be native Javascript.
 
 ## How To Contribute
 
@@ -53,7 +54,7 @@ This project could be implemented in a variety of programming languages. The top
     will make this process easier, but the flow should still be understood.
 
 ```
-$ git clone https://github.com/<your-username/price-scraper.git
+$ git clone https://github.com/<your-username>/price-scraper.git
 ```
 
 4. Setup remotes.
@@ -98,6 +99,9 @@ $ git fetch upstream
 $ git checkout master
 $ git merge upstream/master
 $ git push origin master
+$ git checkout new-branch
+$ git merge master
+$ git push origin new-branch
 ```
 
 11. References
