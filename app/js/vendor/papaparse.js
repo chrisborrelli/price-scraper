@@ -376,7 +376,7 @@ License: MIT
 				return [];
 			var keys = [];
 			for (var key in obj)
-				keys.push(_transformHeader(key));
+				keys.push(key);
 			return keys;
 		}
 
@@ -400,7 +400,7 @@ License: MIT
 				{
 					if (i > 0)
 						csv += _delimiter;
-					csv += safe(fields[i], i);
+					csv += safe(_transformHeader(fields[i]), i);
 				}
 				if (data.length > 0)
 					csv += _newline;
