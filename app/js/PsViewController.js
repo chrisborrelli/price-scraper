@@ -48,6 +48,25 @@ var PsViewController = function() {
     activeSkuNum: -1,
     activeFieldName: ""
   };
+  
+  this.headerLookup = {
+    title:                "Title",
+    brand:                "Product Brand",
+    qty:                  "Stock Total",
+    storageLocation:      "Storage Location",
+    sku:                  "SKU",
+    barcode:              "CF_UPC",
+    condition:            "eBay Condition",
+    conditionDescription: "eBay COndition Description",
+    ebayCheckbox:         "Enabled On eBay",
+    amazonCheckbox:       "Enabled On Amazon",
+    notes:                "Notes",
+    category:             "eBay Category1ID",
+    asin:                 "ASIN",
+    ebayPrice:            "Fixed Price eBay",
+    amazonPrice:          "Fixed Price Amazon",
+    photoList:            "Pictures Generated URL"
+  };
 
   this.itemHtml = fs.readFileSync("./item.html").toString();
 
@@ -103,7 +122,12 @@ var PsViewController = function() {
     if (this.dataModel.isOpen()) {
       let sep = this.dataModel.sep;
       let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.csv';
-      fs.writeFileSync(filePath, Papa.unparse(this.dataModel.db.data.ItemList, {quotes: true, delimiter: ","}));
+      fs.writeFileSync(filePath, Papa.unparse(this.dataModel.db.data.ItemList, {
+      quotes: true, delimiter: ",", header: true, transformHeader: function(header) {
+          console.log(header);
+          return this.headerLookup[header];
+      }.bind(this)
+      }));
     }
     else {
       window.alert("No project open to export.");
@@ -372,6 +396,7 @@ PsViewController.prototype.addNewItem = function(event) {
   feather.replace();
 
   this.dataModel.addNewItem( {
+          title:                '',
           brand:                '',
           qty:                  1,
           storageLocation:      '',
