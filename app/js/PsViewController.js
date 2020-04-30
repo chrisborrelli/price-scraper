@@ -124,7 +124,6 @@ var PsViewController = function() {
       let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.csv';
       fs.writeFileSync(filePath, Papa.unparse(this.dataModel.db.data.ItemList, {
       quotes: true, delimiter: ",", header: true, transformHeader: function(header) {
-          console.log(header);
           return this.headerLookup[header];
       }.bind(this)
       }));
@@ -474,6 +473,7 @@ PsViewController.prototype.generatePhotoList = function(pList, id) {
 /////////////////////////////////////////////////////////////////////////////
 
 var PsApp = null;
+var PsVersion = "0.3.0";
 
 // Place all feather icons...
 feather.replace();
@@ -487,7 +487,7 @@ win.showDevTools();
 
 window.addEventListener('load', (event) => {
 
-  console.log("Page Loaded, received load event");
+  console.log("Ps Version " + PsVersion);
 
   PsApp = new PsViewController();
 
