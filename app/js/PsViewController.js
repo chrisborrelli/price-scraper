@@ -107,7 +107,6 @@ var PsViewController = function() {
   });
 
   // Register Event Handler for Open Project File Selection Events
-  const nodePath = require('path');
   this.openFileInput.addEventListener('change', event => {
     let filePath = event.target.value;
     this.path = nodePath.posix.dirname(filePath);
@@ -121,7 +120,7 @@ var PsViewController = function() {
   this.newButton.addEventListener('click', event => {
     if (this.dataModel.isOpen()) {
       let sep = this.dataModel.sep;
-      let filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.csv';
+      let filePath = this.path + nodePath.sep + this.baseSkuName + sep + this.startSkuNum + '.csv';
       fs.writeFileSync(filePath, Papa.unparse(this.dataModel.db.data.ItemList, {
       quotes: true, delimiter: ",", header: true, transformHeader: function(header) {
           return this.headerLookup[header];
@@ -304,7 +303,7 @@ PsViewController.prototype.dirChanged = function(event) {
     let path = event.target.files[0].path;
     let dirChooserLabel = document.getElementById('dirChooserLabel');
     this.path = path;
-    dirChooserLabel.innerHTML = path + '/';
+    dirChooserLabel.innerHTML = path + nodePath.sep;
     this.tryEnableCreateButton();
   }
 }
@@ -318,7 +317,7 @@ PsViewController.prototype.createNewProject = function(existingFile) {
   let filePath = existingFile;
   
   if (!existingFile) {
-    filePath = this.path + '/' + this.baseSkuName + sep + this.startSkuNum + '.json';
+    filePath = this.path + nodePath.sep + this.baseSkuName + sep + this.startSkuNum + '.json';
   }
 
   // TODO: what should we do if there is an existing data model object?
@@ -356,7 +355,7 @@ PsViewController.prototype.createNewProject = function(existingFile) {
         newFileName = newFileName.join('') + '.' + this.photoConvExt;
 
         // check if adding or deleting a file
-        let path = this.path + '/' + fn;
+        let path = this.path + nodePath.sep + fn;
         if (fs.existsSync(path)) {
           if (this.activeItem.photoList.indexOf(newFileName) == -1) {
             this.activeItem.photoList.push(newFileName);
@@ -415,7 +414,6 @@ PsViewController.prototype.addNewItem = function(event) {
 
   // Reset Focus to new item's title field
   let newTitleId = "title_" + nextSkuNum;
-  console.log(newTitleId);
   document.getElementById(newTitleId).focus();
   document.getElementById(newTitleId).click();
 }
@@ -479,7 +477,7 @@ PsViewController.prototype.generatePhotoList = function(pList, id) {
 /////////////////////////////////////////////////////////////////////////////
 
 var PsApp = null;
-var PsVersion = "0.3.0";
+var PsVersion = "0.3.1";
 
 // Place all feather icons...
 feather.replace();
