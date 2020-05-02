@@ -24,9 +24,10 @@
 //---------------------------------------------------------------------------------
 
 const fs = require("fs");
+const nodePath = require('path');
 
 var JsonDb = function(path) {
-  this.path = (path) ? path : ('./db_' + Math.floor(Date.now() / 1000 ) );
+  this.path = (path) ? path : ('.'+ nodePath.sep +' /db_' + Math.floor(Date.now() / 1000 ) );
   this.data = {};
 
   const exists = fs.existsSync(this.path);

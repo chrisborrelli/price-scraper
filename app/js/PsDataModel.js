@@ -54,7 +54,8 @@ PsDataModel.prototype.initDb = function(filePath, baseSkuName, startSkuNum, phot
       baseSkuName: baseSkuName,
       startSkuNum: startSkuNum,
       photoExt: photoExt,
-      photoConvExt: photoConvExt
+      photoConvExt: photoConvExt,
+      path: nodePath.posix.dirname(filePath)
     };
     this.db.data.ItemList = [];
   }
@@ -69,7 +70,13 @@ PsDataModel.prototype.initDb = function(filePath, baseSkuName, startSkuNum, phot
     for (let i=0 ; i<this.db.data.ItemList.length ; i++) {
       let item = this.db.data.ItemList[i];
       item.photoList.toString = function() {
-        return this.join(C_ArraySeparaterPhoto);
+        let tempList = [];
+        for (let e of this) {
+          let fp = nodePath.posix.dirname(filePath) + nodePath.sep + e;
+          tempList.push(fp);
+        }
+        //console.log(nodePath.posix.dirname(filePath));
+        return tempList.join(C_ArraySeparaterPhoto);
       }
     }
   }
@@ -117,10 +124,22 @@ PsDataModel.prototype.addNewItem = function(item) {
 
   item.sku = this.getNextSku();
 
+  // Grab filePath so it can be captured by closure below.
+  let filePath = this.filePath;
+  
   // Override the toString property for photoList array
   item.photoList.toString = function() {
-    return this.join(C_ArraySeparaterPhoto);
+    let tempList = [];
+    for (let e of this) {
+      let fp = nodePath.posix.dirname(filePath) + nodePath.sep + e;
+      tempList.push(fp);
+    }
+    //console.log(nodePath.posix.dirname(filePath));
+    return tempList.join(C_ArraySeparaterPhoto);
   }
+  
+  
+  
   
   // Add new item to start of the list
   this.db.data.ItemList.unshift (item);
