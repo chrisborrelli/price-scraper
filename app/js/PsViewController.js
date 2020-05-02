@@ -178,7 +178,7 @@ var PsViewController = function() {
     this.addNewItem(event);
   }.bind(this));
 
-  // Register Event Handler for Add New Item Button
+  // Register Event Handler for Close Button
   document.getElementById('button-close').addEventListener("click", function(event) {
     if(this.dataModel.isOpen()) {
       this.dataModel.close();
@@ -211,7 +211,7 @@ var PsViewController = function() {
 /////////////////////////////////////////////////////////////////////////////
 // Event Handler for List of Items UI - clicks, inputs, changes, keyups
 /////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.listUiEventHandler = function() {
+PsViewController.prototype.listUiEventHandler = function(event) {
   const type = event.type;
   const targetId = event.target.id;
 
@@ -412,6 +412,12 @@ PsViewController.prototype.addNewItem = function(event) {
           amazonPrice:          0.00,
           photoList:            []
   });
+
+  // Reset Focus to new item's title field
+  let newTitleId = "title_" + nextSkuNum;
+  console.log(newTitleId);
+  document.getElementById(newTitleId).focus();
+  document.getElementById(newTitleId).click();
 }
 
 /////////////////////////////////////////////////////////////////////////////
