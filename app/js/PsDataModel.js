@@ -55,7 +55,7 @@ PsDataModel.prototype.initDb = function(filePath, baseSkuName, startSkuNum, phot
       startSkuNum: startSkuNum,
       photoExt: photoExt,
       photoConvExt: photoConvExt,
-      path: nodePath.posix.dirname(filePath)
+      path: nodePath.dirname(filePath)
     };
     this.db.data.ItemList = [];
   }
@@ -72,10 +72,10 @@ PsDataModel.prototype.initDb = function(filePath, baseSkuName, startSkuNum, phot
       item.photoList.toString = function() {
         let tempList = [];
         for (let e of this) {
-          let fp = nodePath.posix.dirname(filePath) + nodePath.sep + e;
+          let fp = nodePath.dirname(filePath) + nodePath.sep + e;
           tempList.push(fp);
         }
-        //console.log(nodePath.posix.dirname(filePath));
+        //console.log(nodePath.dirname(filePath));
         return tempList.join(C_ArraySeparaterPhoto);
       }
     }
@@ -131,10 +131,10 @@ PsDataModel.prototype.addNewItem = function(item) {
   item.photoList.toString = function() {
     let tempList = [];
     for (let e of this) {
-      let fp = nodePath.posix.dirname(filePath) + nodePath.sep + e;
+      let fp = nodePath.dirname(filePath) + nodePath.sep + e;
       tempList.push(fp);
     }
-    //console.log(nodePath.posix.dirname(filePath));
+    //console.log(nodePath.dirname(filePath));
     return tempList.join(C_ArraySeparaterPhoto);
   }
   
