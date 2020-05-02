@@ -109,9 +109,9 @@ var PsViewController = function() {
   // Register Event Handler for Open Project File Selection Events
   this.openFileInput.addEventListener('change', event => {
     let filePath = event.target.value;
-    this.path = nodePath.posix.dirname(filePath);
-    //console.log(nodePath.posix.dirname(filePath));
-    //console.log(nodePath.posix.basename(filePath));
+    this.path = nodePath.dirname(filePath);
+    //console.log(nodePath.dirname(filePath));
+    //console.log(nodePath.basename(filePath));
     this.createNewProject(filePath);
   });
 
