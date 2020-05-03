@@ -196,6 +196,7 @@ PsDataModel.prototype.getItemByIdx = function(idx) {
 // Get Next Sku Number
 /////////////////////////////////////////////////////////////////////////////
 PsDataModel.prototype.getNextSkuNumber = function() {
+  // TODO: need to make this more robust when we allow items to be deleted.
   return Number(this.db.data.Config.startSkuNum) + this.db.data.ItemList.length;
 }
 

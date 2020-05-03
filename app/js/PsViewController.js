@@ -34,14 +34,14 @@ var PsViewController = function() {
   this.siteId             = 'siteid=0';
 
   this.dataModel = new PsDataModel('./assets/schema/itemdb.json');
+  let hlJson = new JsonDb('./assets/schema/headerLookup.json');
 
-  var today = new Date();
-
+  this.headerLookup = hlJson.data;
   this.path = "";
   this.baseSkuName = "";
-  this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
-  this.photoExt = document.getElementById('newProjectConfigPhotoFileExt').value;
-  this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;
+  this.startSkuNum = "";
+  this.photoExt = "";
+  this.photoConvExt = "";
 
   this.itemListUiState = {
     pendingChanges: false,
@@ -49,25 +49,6 @@ var PsViewController = function() {
     activeFieldName: ""
   };
   
-  this.headerLookup = {
-    title:                "Title",
-    brand:                "Product Brand",
-    qty:                  "Stock Total",
-    storageLocation:      "Storage Location",
-    sku:                  "SKU",
-    barcode:              "CF_UPC",
-    condition:            "eBay Condition",
-    conditionDescription: "eBay COndition Description",
-    ebayCheckbox:         "Enabled On eBay",
-    amazonCheckbox:       "Enabled On Amazon",
-    notes:                "Notes",
-    category:             "eBay Category1ID",
-    asin:                 "ASIN",
-    ebayPrice:            "Fixed Price eBay",
-    amazonPrice:          "Fixed Price Amazon",
-    photoList:            "Pictures Generated URL"
-  };
-
   this.itemHtml = fs.readFileSync("./item.html").toString();
 
   // Get Element where the items will be listed
@@ -86,7 +67,7 @@ var PsViewController = function() {
     this.listUiEventHandler(event);
   }.bind(this));
 
-  this.itemDivBody.addEventListener('change', event => function(event) {
+  this.itemDivBody.addEventListener('change', function(event) {
     this.listUiEventHandler(event);
   }.bind(this));
 
@@ -96,7 +77,15 @@ var PsViewController = function() {
 
   // Register Event Handler for New Button Click Events
   this.newButton = document.getElementById('button-new');
-  
+  this.newProjVewController = new PsNewProjViewController(function() {
+    this.path = this.newProjVewController.path;
+    this.baseSkuName = this.newProjVewController.baseSkuName;
+    this.startSkuNum = this.newProjVewController.startSkuNum;
+    this.photoExt = this.newProjVewController.photoExt;
+    this.photoConvExt = this.newProjVewController.photoConvExt;
+    this.createNewProject();
+  }.bind(this));
+
   // Register Event Handler for Open Button Click Events
   this.openFileInput = document.getElementById('openProjectFile');
   this.openFileInput.style.display = "none";
@@ -110,8 +99,6 @@ var PsViewController = function() {
   this.openFileInput.addEventListener('change', event => {
     let filePath = event.target.value;
     this.path = nodePath.dirname(filePath);
-    //console.log(nodePath.dirname(filePath));
-    //console.log(nodePath.basename(filePath));
     this.createNewProject(filePath);
   });
 
@@ -132,46 +119,6 @@ var PsViewController = function() {
     }
   });
 
-  // Register Event Handler for Directory Chooser Event
-  this.dirChooser = document.getElementById('dirChooser');
-  this.dirChooser.addEventListener("change", function(event) {
-    this.dirChanged(event);
-  }.bind(this));
-
-  // Register Event Handler for Base Name Change
-  document.getElementById('newProjectConfigBaseName').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.baseSkuName = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for SKU Number Change
-  document.getElementById('newProjectConfigStartSKU').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.startSkuNum = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for Photo File Extension
-  document.getElementById('newProjectConfigPhotoFileExt').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.photoExt = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for Photo Converted File Extension Change
-  document.getElementById('newProjectConfigPhotoConvertedFileExt').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.photoConvExt = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for New Project Create Button
-  this.dirChooser = document.getElementById('createProjectButton');
-  this.dirChooser.addEventListener("click", function(event) {
-    this.createNewProject();
-  }.bind(this));
-
   // Register Event Handler for Add New Item Button
   document.getElementById('addNewItemButton').addEventListener("click", function(event) {
     this.addNewItem(event);
@@ -183,9 +130,9 @@ var PsViewController = function() {
       this.dataModel.close();
       this.path = "";
       this.baseSkuName = "";
-      this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
-      this.photoExt = document.getElementById('newProjectConfigPhotoFileExt').value;
-      this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;
+      this.startSkuNum = "";
+      this.photoExt = "";
+      this.photoConvExt = "";
 
       this.itemListUiState = {
         pendingChanges: false,
@@ -203,8 +150,6 @@ var PsViewController = function() {
       window.alert("No project is open.");
     }
   }.bind(this));
-  
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -236,7 +181,6 @@ PsViewController.prototype.listUiEventHandler = function(event) {
     let itemDivName = 'itemDiv_' + skuNum;
     let prevItemDivName = 'itemDiv_' + previousState.activeSkuNum;
     if (previousState.activeSkuNum >= 0) {
-      //console.log(previousState.activeSkuNum);
       document.getElementById(prevItemDivName).style['background-color'] = '';
     }
     document.getElementById(itemDivName).style['background-color'] = 'lightyellow';
@@ -249,9 +193,6 @@ PsViewController.prototype.listUiEventHandler = function(event) {
     case 'input':
     case 'change':
       this.activeItem[fieldName] = event.srcElement.value;
-      //console.log(event.srcElement.value);
-      //console.log(this.activeItem);
-
       break;
     case 'keyup':
       if (event.key == "Tab") {
@@ -259,18 +200,6 @@ PsViewController.prototype.listUiEventHandler = function(event) {
       }
       break;
     default:
-  }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Try to Enable Create Button
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.tryEnableCreateButton = function() {
-  if (this.baseSkuName != "" && this.path != "" && this.startSkuNum != "" && this.photoExt != "" && this.photoConvExt != "") {
-    document.getElementById('createProjectButton').removeAttribute('disabled');
-  }
-  else {
-    document.getElementById('createProjectButton').setAttribute('disabled', "");
   }
 }
 
@@ -296,20 +225,7 @@ PsViewController.prototype.getResults = function() {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// New Project - Directory Changed Event Handler
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.dirChanged = function(event) {
-  if (event.target.files.length > 0) {
-    let path = event.target.files[0].path;
-    let dirChooserLabel = document.getElementById('dirChooserLabel');
-    this.path = path;
-    dirChooserLabel.innerHTML = path + nodePath.sep;
-    this.tryEnableCreateButton();
-  }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// New Project - Create New Project Button Click Event Handler
+// Create New Project
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.createNewProject = function(existingFile) {
   let sep = this.dataModel.sep;
@@ -440,7 +356,6 @@ PsViewController.prototype.loadItems = function() {
 
     for (const [key, value] of Object.entries(item)) {
       let webKey = key + '_' + skuNum;
-      //console.log("webKey: " + webKey + ' :: ' + value);
       if (key != "photoList") {
         document.getElementById(webKey).value = value;
       }
@@ -477,7 +392,7 @@ PsViewController.prototype.generatePhotoList = function(pList, id) {
 /////////////////////////////////////////////////////////////////////////////
 
 var PsApp = null;
-var PsVersion = "0.3.1";
+var PsVersion = "0.3.2";
 
 // Place all feather icons...
 feather.replace();
@@ -490,17 +405,8 @@ if (process.versions['nw-flavor'] == 'sdk') {
   console.log("Using nw.js SDK flavor");
 }
 
-// var os = require('os');
-// console.log('You are running on ', os.platform());
-
 window.addEventListener('load', (event) => {
-
   console.log("Ps Version " + PsVersion);
-
-  console.log();
-
   PsApp = new PsViewController();
-
-  PsApp.getResults();
-
+  //PsApp.getResults();
 });
