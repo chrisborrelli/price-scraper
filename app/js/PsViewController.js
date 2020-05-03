@@ -484,7 +484,11 @@ feather.replace();
 
 var gui = require('nw.gui');
 var win = gui.Window.get();
-win.showDevTools();
+
+if (process.versions['nw-flavor'] == 'sdk') {
+  win.showDevTools();
+  console.log("Using nw.js SDK flavor");
+}
 
 // var os = require('os');
 // console.log('You are running on ', os.platform());
@@ -492,6 +496,8 @@ win.showDevTools();
 window.addEventListener('load', (event) => {
 
   console.log("Ps Version " + PsVersion);
+
+  console.log();
 
   PsApp = new PsViewController();
 
