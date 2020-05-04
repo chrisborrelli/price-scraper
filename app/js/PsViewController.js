@@ -127,6 +127,7 @@ var PsViewController = function() {
   // Register Event Handler for Close Button
   document.getElementById('button-close').addEventListener("click", function(event) {
     if(this.dataModel.isOpen()) {
+      this.dataModel.saveData();
       this.dataModel.close();
       this.path = "";
       this.baseSkuName = "";
@@ -192,7 +193,13 @@ PsViewController.prototype.listUiEventHandler = function(event) {
       break;
     case 'input':
     case 'change':
-      this.activeItem[fieldName] = event.srcElement.value;
+      // handle checkbox differently because the value field is not an indicator of checked/unchecked
+      if (event.srcElement.type == "checkbox") {
+        this.activeItem[fieldName] = event.srcElement.checked;
+      }
+      else {
+        this.activeItem[fieldName] = event.srcElement.value;
+      }
       break;
     case 'keyup':
       if (event.key == "Tab") {
@@ -318,8 +325,8 @@ PsViewController.prototype.addNewItem = function(event) {
           barcode:              '',
           condition:            'New',
           conditionDescription: '',
-          ebayCheckbox:         true,
-          amazonCheckbox:       true,
+          ebayCheckbox:         false,
+          amazonCheckbox:       false,
           notes:                '',
           category:             '',
           asin:                 '',
@@ -356,7 +363,11 @@ PsViewController.prototype.loadItems = function() {
 
     for (const [key, value] of Object.entries(item)) {
       let webKey = key + '_' + skuNum;
-      if (key != "photoList") {
+
+      if (document.getElementById(webKey).type == 'checkbox') {
+        document.getElementById(webKey).checked = value;
+      }
+      else if (key != "photoList") {
         document.getElementById(webKey).value = value;
       }
       else {
