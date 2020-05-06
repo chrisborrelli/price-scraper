@@ -34,73 +34,38 @@ var PsViewController = function() {
   this.siteId             = 'siteid=0';
 
   this.dataModel = new PsDataModel('./assets/schema/itemdb.json');
+  let hlJson = new JsonDb('./assets/schema/headerLookup.json');
 
-  var today = new Date();
-
+  this.headerLookup = hlJson.data;
   this.path = "";
   this.baseSkuName = "";
-  this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
-  this.photoExt = document.getElementById('newProjectConfigPhotoFileExt').value;
-  this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;
+  this.startSkuNum = "";
+  this.photoExt = "";
+  this.photoConvExt = "";
 
-  this.itemListUiState = {
-    pendingChanges: false,
-    activeSkuNum: -1,
-    activeFieldName: ""
-  };
-  
-  this.headerLookup = {
-    title:                "Title",
-    brand:                "Product Brand",
-    qty:                  "Stock Total",
-    storageLocation:      "Storage Location",
-    sku:                  "SKU",
-    barcode:              "CF_UPC",
-    condition:            "eBay Condition",
-    conditionDescription: "eBay COndition Description",
-    ebayCheckbox:         "Enabled On eBay",
-    amazonCheckbox:       "Enabled On Amazon",
-    notes:                "Notes",
-    category:             "eBay Category1ID",
-    asin:                 "ASIN",
-    ebayPrice:            "Fixed Price eBay",
-    amazonPrice:          "Fixed Price Amazon",
-    photoList:            "Pictures Generated URL"
-  };
-
-  this.itemHtml = fs.readFileSync("./item.html").toString();
-
-  // Get Element where the items will be listed
-  this.itemDivBody = document.getElementById('itemDivBody');
-  
-  // Disable Export and Close buttons
-  document.getElementById('button-close').setAttribute('disabled', "");
-  document.getElementById('button-export').setAttribute('disabled', "");
-
-  // Send List Events to a common event handler
-  this.itemDivBody.addEventListener('click', function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
-
-  this.itemDivBody.addEventListener('input', function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
-
-  this.itemDivBody.addEventListener('change', event => function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
-
-  this.itemDivBody.addEventListener('keyup', function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
+  // Disable Export and Close Buttons
+  this.enableExportCloseButtons(false);
 
   // Register Event Handler for New Button Click Events
   this.newButton = document.getElementById('button-new');
   
+  // Create Instance of View Controller for New Project Dialog Box
+  // - note we are passing a callback here so that whe a project is
+  //   created at some point in the future, this closure funciton will be
+  //   run. It copies some key data and calls the createNewProject()
+  //   function of the PsViewController (this Object)
+  this.newProjVewController = new PsNewProjViewController(function() {
+    this.path = this.newProjVewController.path;
+    this.baseSkuName = this.newProjVewController.baseSkuName;
+    this.startSkuNum = this.newProjVewController.startSkuNum;
+    this.photoExt = this.newProjVewController.photoExt;
+    this.photoConvExt = this.newProjVewController.photoConvExt;
+    this.createNewProject();
+  }.bind(this));
+
   // Register Event Handler for Open Button Click Events
   this.openFileInput = document.getElementById('openProjectFile');
   this.openFileInput.style.display = "none";
-
   this.openButton = document.getElementById('button-open');
   this.openButton.addEventListener('click', event => {
     this.openFileInput.click(); // call click event on file input element
@@ -110,8 +75,6 @@ var PsViewController = function() {
   this.openFileInput.addEventListener('change', event => {
     let filePath = event.target.value;
     this.path = nodePath.dirname(filePath);
-    //console.log(nodePath.dirname(filePath));
-    //console.log(nodePath.basename(filePath));
     this.createNewProject(filePath);
   });
 
@@ -132,146 +95,31 @@ var PsViewController = function() {
     }
   });
 
-  // Register Event Handler for Directory Chooser Event
-  this.dirChooser = document.getElementById('dirChooser');
-  this.dirChooser.addEventListener("change", function(event) {
-    this.dirChanged(event);
-  }.bind(this));
-
-  // Register Event Handler for Base Name Change
-  document.getElementById('newProjectConfigBaseName').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.baseSkuName = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for SKU Number Change
-  document.getElementById('newProjectConfigStartSKU').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.startSkuNum = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for Photo File Extension
-  document.getElementById('newProjectConfigPhotoFileExt').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.photoExt = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for Photo Converted File Extension Change
-  document.getElementById('newProjectConfigPhotoConvertedFileExt').addEventListener('input', function(event) {
-    let element = document.getElementById(event.target.id);
-    this.photoConvExt = element.value;
-    this.tryEnableCreateButton();
-  }.bind(this));
-
-  // Register Event Handler for New Project Create Button
-  this.dirChooser = document.getElementById('createProjectButton');
-  this.dirChooser.addEventListener("click", function(event) {
-    this.createNewProject();
-  }.bind(this));
-
   // Register Event Handler for Add New Item Button
   document.getElementById('addNewItemButton').addEventListener("click", function(event) {
-    this.addNewItem(event);
+    this.itemListVC.addNewItem(event);
   }.bind(this));
 
   // Register Event Handler for Close Button
   document.getElementById('button-close').addEventListener("click", function(event) {
     if(this.dataModel.isOpen()) {
+      this.dataModel.saveData();
       this.dataModel.close();
       this.path = "";
       this.baseSkuName = "";
-      this.startSkuNum = document.getElementById('newProjectConfigStartSKU').value;
-      this.photoExt = document.getElementById('newProjectConfigPhotoFileExt').value;
-      this.photoConvExt = document.getElementById('newProjectConfigPhotoConvertedFileExt').value;
-
-      this.itemListUiState = {
-        pendingChanges: false,
-        activeSkuNum: -1,
-        activeFieldName: ""
-      };
-      this.itemDivBody.innerHTML = "";
-      document.getElementById("listDivMain").hidden = true;
-      document.getElementById("itemMainCard").hidden = true;
-      document.getElementById('button-close').setAttribute('disabled', "");
-      document.getElementById('button-export').setAttribute('disabled', "");
+      this.startSkuNum = "";
+      this.photoExt = "";
+      this.photoConvExt = "";
       this.openFileInput.value="";
-    }
-    else {
-      window.alert("No project is open.");
+
+      // Close down item list object...
+      this.itemListVC.close();
+      this.itemListVC = undefined;
+
+      // Disable Export and Close Buttons
+      this.enableExportCloseButtons(false);
     }
   }.bind(this));
-  
-
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Event Handler for List of Items UI - clicks, inputs, changes, keyups
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.listUiEventHandler = function(event) {
-  const type = event.type;
-  const targetId = event.target.id;
-
-  if (targetId.length == 0) {
-    return;
-  }
-
-  const splitStr = targetId.split('_');
-  const skuNum = splitStr[splitStr.length-1];
-  const fieldName = splitStr[0];
-
-  // Copy state to see if anything changed..
-  const previousState = Object.assign({}, this.itemListUiState);
-
-  // update current state based on current event
-  this.itemListUiState.activeSkuNum = skuNum;
-  this.itemListUiState.activeFieldName = fieldName;
-
-  if (previousState.activeSkuNum != this.itemListUiState.activeSkuNum) {
-    this.activeItem = this.dataModel.getItemBySkuNum(skuNum);
-
-    // Setup background colors of previous and new active item
-    let itemDivName = 'itemDiv_' + skuNum;
-    let prevItemDivName = 'itemDiv_' + previousState.activeSkuNum;
-    if (previousState.activeSkuNum >= 0) {
-      //console.log(previousState.activeSkuNum);
-      document.getElementById(prevItemDivName).style['background-color'] = '';
-    }
-    document.getElementById(itemDivName).style['background-color'] = 'lightyellow';
-  }
-
-  switch (type) {
-    case 'click':
-      this.dataModel.saveData();
-      break;
-    case 'input':
-    case 'change':
-      this.activeItem[fieldName] = event.srcElement.value;
-      //console.log(event.srcElement.value);
-      //console.log(this.activeItem);
-
-      break;
-    case 'keyup':
-      if (event.key == "Tab") {
-        this.dataModel.saveData();
-      }
-      break;
-    default:
-  }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Try to Enable Create Button
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.tryEnableCreateButton = function() {
-  if (this.baseSkuName != "" && this.path != "" && this.startSkuNum != "" && this.photoExt != "" && this.photoConvExt != "") {
-    document.getElementById('createProjectButton').removeAttribute('disabled');
-  }
-  else {
-    document.getElementById('createProjectButton').setAttribute('disabled', "");
-  }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -296,20 +144,7 @@ PsViewController.prototype.getResults = function() {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// New Project - Directory Changed Event Handler
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.dirChanged = function(event) {
-  if (event.target.files.length > 0) {
-    let path = event.target.files[0].path;
-    let dirChooserLabel = document.getElementById('dirChooserLabel');
-    this.path = path;
-    dirChooserLabel.innerHTML = path + nodePath.sep;
-    this.tryEnableCreateButton();
-  }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// New Project - Create New Project Button Click Event Handler
+// Create or Open New Project
 /////////////////////////////////////////////////////////////////////////////
 PsViewController.prototype.createNewProject = function(existingFile) {
   let sep = this.dataModel.sep;
@@ -335,141 +170,22 @@ PsViewController.prototype.createNewProject = function(existingFile) {
     this.photoConvExt = this.dataModel.db.data.Config.photoConvExt;
   }
 
-  this.itemDivBody.innerHTML = "";
-  document.getElementById("listDivMain").hidden = false;
-  document.getElementById("itemMainCard").hidden = true;
-  document.getElementById('button-close').removeAttribute('disabled');
-  document.getElementById('button-export').removeAttribute('disabled');
-  this.loadItems();
-
-  // TODO: refactor and move this callback to a memnber function...
-  fs.watch(this.path, function(eventType, fn) {
-    if (eventType == 'rename' && fn.split('.').pop().toLowerCase() == this.photoExt.toLowerCase()) {
-      
-      //this.photoConvExt
-      if (this.activeItem) {
-
-        // Convert file extension for adding or deleting the file
-        let newFileName = fn.split('.');
-        newFileName.pop();
-        newFileName = newFileName.join('') + '.' + this.photoConvExt;
-
-        // check if adding or deleting a file
-        let path = this.path + nodePath.sep + fn;
-        if (fs.existsSync(path)) {
-          if (this.activeItem.photoList.indexOf(newFileName) == -1) {
-            this.activeItem.photoList.push(newFileName);
-          }
-        }
-        else {
-          let idxDelete = this.activeItem.photoList.indexOf(newFileName);
-          if (idxDelete != -1) {
-            this.activeItem.photoList.splice(idxDelete,1);
-          }
-        }
-        this.dataModel.saveData();
-        this.generatePhotoList(this.activeItem.photoList, "photoList_" + this.itemListUiState.activeSkuNum);
-      }
-    }
-  }.bind(this));
+  // Create New Item List View Controller
+  this.itemListVC = new PsItemListViewController(this.dataModel, 'itemDivBody',
+                                                 './item.html', this.path);
+  // Enable Export and Close Buttons
+  this.enableExportCloseButtons(true);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// Add New Item
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.addNewItem = function(event) {
-  let nextSku = this.dataModel.getNextSku();
-  let nextSkuNum = this.dataModel.getNextSkuNumber();
-
-  // Setup UI with new item to be added
-  let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, nextSku);
-  let bar = (this.itemDivBody.innerHTML == "") ? "" : "<hr>" ;
-
-  this.itemDivBody.insertAdjacentHTML('afterbegin', htmlString.replace(/__NUM__/gi, nextSkuNum) + bar);
-
-  //this.itemDivBody.innerHTML = htmlString.replace(/__NUM__/gi, nextSkuNum) + bar + this.itemDivBody.innerHTML;
-  document.getElementById("itemMainCard").hidden = false;
-
-  // draw any feathers on the new gui element..
-  feather.replace();
-
-  this.dataModel.addNewItem( {
-          title:                '',
-          brand:                '',
-          qty:                  1,
-          storageLocation:      '',
-          sku:                  '',
-          barcode:              '',
-          condition:            'New',
-          conditionDescription: '',
-          ebayCheckbox:         true,
-          amazonCheckbox:       true,
-          notes:                '',
-          category:             '',
-          asin:                 '',
-          ebayPrice:            0.00,
-          amazonPrice:          0.00,
-          photoList:            []
-  });
-
-  // Reset Focus to new item's title field
-  let newTitleId = "title_" + nextSkuNum;
-  document.getElementById(newTitleId).focus();
-  document.getElementById(newTitleId).click();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Load Items
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.loadItems = function() {
-  this.itemDivBody.innerHTML == "";
-
-  if (this.dataModel.db.data.ItemList.length > 0) {
-    document.getElementById("itemMainCard").hidden = false;
+PsViewController.prototype.enableExportCloseButtons = function(enable) {
+  if (enable) {
+    document.getElementById('button-close').removeAttribute('disabled');
+    document.getElementById('button-export').removeAttribute('disabled');
   }
-
-  for (let i=0 ; i<this.dataModel.db.data.ItemList.length ; i++) {
-    let item = this.dataModel.getItemByIdx(i);
-    let sku = item.sku
-    let htmlString = this.itemHtml.toString().replace(/__SKU__/gi, sku);
-    let bar = (this.itemDivBody.innerHTML == "") ? "" : "<hr>" ;
-    let splitStr = sku.split('-');
-    let skuNum = splitStr[splitStr.length-1];
-
-    this.itemDivBody.insertAdjacentHTML('beforeend', bar + htmlString.replace(/__NUM__/gi, skuNum));
-
-    for (const [key, value] of Object.entries(item)) {
-      let webKey = key + '_' + skuNum;
-      //console.log("webKey: " + webKey + ' :: ' + value);
-      if (key != "photoList") {
-        document.getElementById(webKey).value = value;
-      }
-      else {
-        this.generatePhotoList(value, webKey);
-      }
-    }
+  else {
+    document.getElementById('button-close').setAttribute('disabled', "");
+    document.getElementById('button-export').setAttribute('disabled', "");
   }
-
-  // draw any feathers on the new gui element..
-  feather.replace();
-
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// generatePhotoList
-/////////////////////////////////////////////////////////////////////////////
-PsViewController.prototype.generatePhotoList = function(pList, id) {
-  let photoListDiv = document.getElementById(id);
- 
-  // Clear the list (regen whole list from scratch)
-  while (photoListDiv.firstChild) {
-    photoListDiv.removeChild(photoListDiv.firstChild);
-  }
-  photoListDiv.insertAdjacentHTML('beforeend', '<ul>');
-  for (let p=0 ; p<pList.length ; p++) {
-    photoListDiv.insertAdjacentHTML('beforeend', '<li>' + pList[p] + '</li>');
-  }
-  photoListDiv.insertAdjacentHTML('beforeend', '</ul>');
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -477,7 +193,7 @@ PsViewController.prototype.generatePhotoList = function(pList, id) {
 /////////////////////////////////////////////////////////////////////////////
 
 var PsApp = null;
-var PsVersion = "0.3.1";
+var PsVersion = "0.3.2";
 
 // Place all feather icons...
 feather.replace();
@@ -490,17 +206,8 @@ if (process.versions['nw-flavor'] == 'sdk') {
   console.log("Using nw.js SDK flavor");
 }
 
-// var os = require('os');
-// console.log('You are running on ', os.platform());
-
 window.addEventListener('load', (event) => {
-
   console.log("Ps Version " + PsVersion);
-
-  console.log();
-
   PsApp = new PsViewController();
-
-  PsApp.getResults();
-
+  //PsApp.getResults();
 });

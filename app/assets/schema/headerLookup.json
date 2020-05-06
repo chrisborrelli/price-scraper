@@ -1,0 +1,18 @@
+{
+  "title":                "Title",
+  "brand":                "Product Brand",
+  "qty":                  "Stock Total",
+  "storageLocation":      "Storage Location",
+  "sku":                  "SKU",
+  "barcode":              "CF_UPC",
+  "condition":            "eBay Condition",
+  "conditionDescription": "eBay Condition Description",
+  "ebayCheckbox":         "Enabled On eBay",
+  "amazonCheckbox":       "Enabled On Amazon",
+  "notes":                "Notes",
+  "category":             "eBay Category1ID",
+  "asin":                 "ASIN",
+  "ebayPrice":            "Fixed Price eBay",
+  "amazonPrice":          "Fixed Price Amazon",
+  "photoList":            "Pictures Generated URL"
+}
