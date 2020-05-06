@@ -46,11 +46,14 @@ var PsItemListViewController = function(dataModel, itemDivBody, htmlFileName, wa
   };
 
   this.loadItems();
+  document.getElementById("listDivMain").hidden = false;
   
   this.registerEventHandlers();
   
   // Reset Focus to new item's title field
-  this.setFocus(this.dataModel.db.data.ItemList[0].sku.split('-').pop(), "title");
+  if (this.dataModel.db.data.ItemList.length) {
+    this.setFocus(this.dataModel.db.data.ItemList[0].sku.split('-').pop(), "title");
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -290,4 +293,6 @@ PsItemListViewController.prototype.watchDirEventHandler = function(eventType, fn
 /////////////////////////////////////////////////////////////////////////////
 PsItemListViewController.prototype.close = function() {
   this.itemDivBody.innerHTML = "";
+  document.getElementById("listDivMain").hidden = true;
+  document.getElementById("itemMainCard").hidden = true;
 }

@@ -43,12 +43,17 @@ var PsViewController = function() {
   this.photoExt = "";
   this.photoConvExt = "";
 
-  // Disable Export and Close buttons
-  document.getElementById('button-close').setAttribute('disabled', "");
-  document.getElementById('button-export').setAttribute('disabled', "");
+  // Disable Export and Close Buttons
+  this.enableExportCloseButtons(false);
 
   // Register Event Handler for New Button Click Events
   this.newButton = document.getElementById('button-new');
+  
+  // Create Instance of View Controller for New Project Dialog Box
+  // - note we are passing a callback here so that whe a project is
+  //   created at some point in the future, this closure funciton will be
+  //   run. It copies some key data and calls the createNewProject()
+  //   function of the PsViewController (this Object)
   this.newProjVewController = new PsNewProjViewController(function() {
     this.path = this.newProjVewController.path;
     this.baseSkuName = this.newProjVewController.baseSkuName;
@@ -61,7 +66,6 @@ var PsViewController = function() {
   // Register Event Handler for Open Button Click Events
   this.openFileInput = document.getElementById('openProjectFile');
   this.openFileInput.style.display = "none";
-
   this.openButton = document.getElementById('button-open');
   this.openButton.addEventListener('click', event => {
     this.openFileInput.click(); // call click event on file input element
@@ -106,19 +110,14 @@ var PsViewController = function() {
       this.startSkuNum = "";
       this.photoExt = "";
       this.photoConvExt = "";
+      this.openFileInput.value="";
 
       // Close down item list object...
       this.itemListVC.close();
       this.itemListVC = undefined;
 
-      document.getElementById("listDivMain").hidden = true;
-      document.getElementById("itemMainCard").hidden = true;
-      document.getElementById('button-close').setAttribute('disabled', "");
-      document.getElementById('button-export').setAttribute('disabled', "");
-      this.openFileInput.value="";
-    }
-    else {
-      window.alert("No project is open.");
+      // Disable Export and Close Buttons
+      this.enableExportCloseButtons(false);
     }
   }.bind(this));
 }
@@ -171,14 +170,22 @@ PsViewController.prototype.createNewProject = function(existingFile) {
     this.photoConvExt = this.dataModel.db.data.Config.photoConvExt;
   }
 
-  document.getElementById("listDivMain").hidden = false;
-  document.getElementById("itemMainCard").hidden = true;
-  document.getElementById('button-close').removeAttribute('disabled');
-  document.getElementById('button-export').removeAttribute('disabled');
-
   // Create New Item List View Controller
   this.itemListVC = new PsItemListViewController(this.dataModel, 'itemDivBody',
                                                  './item.html', this.path);
+  // Enable Export and Close Buttons
+  this.enableExportCloseButtons(true);
+}
+
+PsViewController.prototype.enableExportCloseButtons = function(enable) {
+  if (enable) {
+    document.getElementById('button-close').removeAttribute('disabled');
+    document.getElementById('button-export').removeAttribute('disabled');
+  }
+  else {
+    document.getElementById('button-close').setAttribute('disabled', "");
+    document.getElementById('button-export').setAttribute('disabled', "");
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////
