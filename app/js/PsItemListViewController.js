@@ -61,23 +61,13 @@ var PsItemListViewController = function(dataModel, itemDivBody, htmlFileName, wa
 /////////////////////////////////////////////////////////////////////////////
 PsItemListViewController.prototype.registerEventHandlers = function() {
   // Send List Events to a common event handler
-  this.itemDivBody.addEventListener('click', function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
+  this.ehref = this.listUiEventHandler.bind(this);
 
-  this.itemDivBody.addEventListener('input', function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
-
-  this.itemDivBody.addEventListener('change', function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
-
-  this.itemDivBody.addEventListener('keyup', function(event) {
-    this.listUiEventHandler(event);
-  }.bind(this));
-  
-  fs.watch(this.path, function(eventType, fn) {
+  this.itemDivBody.addEventListener('click', this.ehref, false);
+  this.itemDivBody.addEventListener('input', this.ehref, false);
+  this.itemDivBody.addEventListener('change', this.ehref, false);
+  this.itemDivBody.addEventListener('keyup', this.ehref, false);
+  this.ehfswatch = fs.watch(this.path, function(eventType, fn) {
     this.watchDirEventHandler(eventType, fn);
   }.bind(this));
 }
@@ -99,6 +89,7 @@ PsItemListViewController.prototype.listUiEventHandler = function(event) {
 
   // Copy state to see if anything changed..
   const previousState = Object.assign({}, this.itemListUiState);
+  console.log(previousState);
 
   // update current state based on current event
   this.itemListUiState.activeSkuNum = skuNum;
@@ -260,6 +251,7 @@ PsItemListViewController.prototype.generatePhotoList = function(pList, id) {
 PsItemListViewController.prototype.watchDirEventHandler = function(eventType, fn) {
   let photoExt = this.dataModel.photoExt;
   let photoConvExt = this.dataModel.photoConvExt;
+  console.log("event: dir watcher...")
   
   if (eventType == 'rename' && fn.split('.').pop().toLowerCase() == photoExt.toLowerCase()) {
     if (this.activeItem) {
@@ -295,4 +287,10 @@ PsItemListViewController.prototype.close = function() {
   this.itemDivBody.innerHTML = "";
   document.getElementById("listDivMain").hidden = true;
   document.getElementById("itemMainCard").hidden = true;
+
+  this.itemDivBody.removeEventListener('click', this.ehref, false);
+  this.itemDivBody.removeEventListener('input', this.ehref, false);
+  this.itemDivBody.removeEventListener('chage', this.ehref, false);
+  this.itemDivBody.removeEventListener('keyup', this.ehref, false);
+  this.ehfswatch.close();
 }
